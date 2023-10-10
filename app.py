@@ -1,81 +1,9 @@
-import datetime
-from flask import Flask, render_template, request, jsonify
-from pymongo import MongoClient
-import bcrypt
-
+from flask import Flask
 app = Flask(__name__)
-
-client = MongoClient('localhost', 27017)
-db = client.dbjungle
-
-def get_week_number(date_str):
-    try:
-        # 날짜 문자열을 datetime 객체로 변환
-        date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-
-        # 날짜로부터 해당 주차 계산
-        week_number = date.isocalendar()[1]
-
-        return week_number
-    except ValueError:
-        return "날짜 형식이 잘못되었습니다."
 
 @app.route('/')
 def home():
-   return render_template('select_team.html')
+   return '정글에서 살아남기'
 
-@app.route('/create_team')
-def createTeam():
-   return render_template('create_team.html')
-
-@app.route('/team_page')
-def teamPage():
-   return render_template('team_page.html')
-
-@app.route('/api/getDate', methods=['GET'])
-def getDate():
-    target_team = list(db.target_team.find({}, {'_id': False}))
-    return jsonify({'result': 'success', 'target_team': target_team})
-
-@app.route('/api/getTeam', methods=['GET'])
-def getTeam():
-    teams = list(db.team.find({}, {'_id': False}))
-    sorted_teams = sorted(teams, key=lambda x: (x['week'], x['name']))
-    print(sorted_teams)
-    return jsonify({'result': 'success', 'teams': sorted_teams})
-
-@app.route('/api/getTarget', methods=['GET'])
-def getTarget():
-    targets = list(db.target.find({}, {'_id': False}))
-    sorted_targets = sorted(targets, key=lambda x: (x['target_date'], x['member_id']))
-    return jsonify({'result': 'success', 'targets': sorted_targets})
-
-@app.route('/api/postTeam', methods=['POST'])
-def postTeam():
-    received_name = request.form['name_give']
-    received_start_date = request.form['start_date_give']
-    received_end_date = request.form['end_date_give']
-
-    start_data_list = received_start_date.split("/")
-    end_data_list = received_end_date.split("/")
-
-    translated_start_data = start_data_list[2] + "-" + start_data_list[0] + "-" + start_data_list[1]
-    translated_end_data = end_data_list[2] + "-" + end_data_list[0] + "-" + end_data_list[1]
-
-    date_str = '2023-10-10'
-
-
-@app.route('/login')
-def login():  
-    return render_template('login.html')
-
-@app.route('/forgot_pwd')
-def forgot_pwd(): 
-    return render_template('forgot_pwd.html')
-
-@app.route('/sign_in')
-def sign_in():
-   return render_template('sign_in.html')
-
-if __name__ == '__main__':
+if __name__ == '__main__':  
    app.run('0.0.0.0',port=5000,debug=True)
