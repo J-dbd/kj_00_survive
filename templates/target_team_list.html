@@ -30,30 +30,25 @@
         ??월??일
     </div>
     <div class="flex">
-        {% for user_name, user_text in result.items() %}
         <div class="flex m-4">
             <div class="bg-green-200">
                 <div class="text-center text-3xl font-semibold">
-                    {{user_name}}
                 </div>
-                {% for item in user_text %}
                 <div class="m-2 p-2">
                     <div class="flex justify-between items-center">
-                    <span>{{item[0]}}</span>
-                    <input type="checkbox" class="mx-2 w-[16px] h-[16px]" {{item[1]}}>
+                    <span></span>
+                    <input type="checkbox" class="mx-2 w-[16px] h-[16px]">
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
-        {% endfor %}
     </div>
 </div>
     </div>
-    <footer class="flex flex-wrap justify-between bg-gray-500 p-4">
-        <div class="w-[1000px] h-6 bg-gray-200 rounded-full">
-          <div class="h-6 bg-green-700 rounded-full" style="width: {{percentage}}%"></div>
-        </div>
+    <footer class="flex flex-wrap justify-between bg-gray-50 p-4">
+<div class="w-full h-6 bg-gray-200 rounded-full dark:bg-gray-700">
+  <div class="h-6 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 45%"></div>
+</div>
         <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black" onclick="window.location.href=`{{ url_for('selectTeam') }}` ">
             부족에서 나가기
         </span>
