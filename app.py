@@ -17,14 +17,9 @@ def getGroup():
    return jsonify({'result': 'success', 'group': groups})
 
 
-@app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
-
-
-@app.route('/login')
-def login():  
-    return render_template('login.html')
+@app.route('/login', methods=['POST','GET'])
+def login():
+   return render_template('login.html')
 
 @app.route('/forgot_pwd')
 def forgot_pwd(): 
