@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정글에서 살아남기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script>
+      function getGroup(){
+        $.ajax({
+          type: 'GET',
+          url: '/api/list',
+          data: {},
+          success: function (response) {
+            let groups = response['group']
+            for (let i = 0; i < groups.length; i++) {
+              let group = groups[i]
+              let name = group['name']
+            }
+          }
+        });
+      }
+    </script>
+</head>
+
+<body>
+    <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-4 sm:py-12">
+        <div class="relative bg-white px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10">
+                <div class="divide-y divide-gray-300/50">
+                  <div class="space-y-6 py-8 text-base leading-7 text-gray-600">
+                    <p class="grid place-items-center text-[22px]">부족(팀)을 선택하세요</p>
+                  </div>
+                  <div class="pt-8  pb-8 grid place-items-center">                    
+                    <button type="button" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Teal to Lime</button>
+                    <button type="button" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Teal to Lime</button>
+                    <button type="button" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Teal to Lime</button>
+                    <button type="button" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Teal to Lime</button>
+                  </div>
+                  <div class="pt-8 text-base font-semibold leading-7 flex justify-center">
+                    <button type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">로그아웃</button>
+                    <button type="button" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">새로 만들기</button>
+                  </div>
+        </div>
+    </div>
+</body>
+    <script src="{{url_for('static', filename='index.js')}}"></script>
+</html>
