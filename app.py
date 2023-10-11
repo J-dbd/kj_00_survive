@@ -5,8 +5,8 @@ import bcrypt
 
 app = Flask(__name__)
 
-client = MongoClient('mongodb://chanu:jungle@43.200.163.82:27017', 27017)
-db = client.jungle
+client = MongoClient('localhost', 27017)
+db = client.dbjungle
 
 def get_week_number(date_str):
     try:
@@ -22,10 +22,6 @@ def get_week_number(date_str):
 
 @app.route('/')
 def home():
-   return render_template('team_page.html')
-
-@app.route('/select_team')
-def selectTeam():
    return render_template('select_team.html')
 
 @app.route('/create_team')
@@ -82,4 +78,4 @@ def sign_in():
    return render_template('sign_in.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+   app.run('0.0.0.0',port=5000,debug=True)
