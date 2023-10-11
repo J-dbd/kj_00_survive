@@ -46,9 +46,12 @@ def target_list():
 
     data = list(db.target.find({}, {"_id":0, "member_id":1, "text":1, "state":1}))
     result = {}
+    total_count = len(data)
+    cnt = 0
     for item in data:
         if item['state'] == True:
             item['state'] = "checked"
+            cnt += 1
         else:
             item['state'] = ""
         text_state = [item['text'], item['state']]
@@ -59,7 +62,9 @@ def target_list():
             result[item['member_id']].append(text_state)
     print(result)
 
-    return render_template('target_list.html',result=result, total_count = len(data))
+    percentage = cnt/total_count * 100
+
+    return render_template('target_list.html',result=result, percentage = percentage)
 
 if __name__ == '__main__':  
    app.run('0.0.0.0',port=5000,debug=True)
