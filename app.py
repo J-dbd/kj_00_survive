@@ -9,7 +9,17 @@ db = client.dbjungle
 
 @app.route('/')
 def home():
+   return render_template('click_start_date.html')
+
+@app.route('/select_team')
+def selectTeam():
    return render_template('select_team.html')
+
+@app.route('/click_start_date.html')
+def createTeam():
+   return render_template('create_team.html')
+
+
 
 @app.route('/api/list', methods=['GET'])
 def getGroup():
