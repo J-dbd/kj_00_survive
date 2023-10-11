@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정글에서 살아남기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+</head>
+
+<body>
+    <div class="flex items-center justify-center h-screen bg-black">
+        <div class="flex flex-col items-center justify-center bg-white w-[420px] h-[300px]">
+            <div>
+                <p>정글에서 살아남기</p>
+            </div>
+            <div>
+                <form><input id="user_id" value="ID"
+                        style="color:gray; outline: 0.5px solid gray; margin:1px;padding:1px;"><br><input id="pwd"
+                        value="password" style="color:gray; outline: 0.5px solid gray; margin:1px;padding:1px;"></form>
+            </div>
+            <div>
+                <span><a href="{{ url_for('forgot_pwd') }}">forgot ID/Password?</span>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="{{url_for('static', filename='index.js')}}"></script>
+
+</html>
