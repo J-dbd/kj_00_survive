@@ -22,5 +22,17 @@ def hello_world():  # put application's code here
     return 'Hello World!'
 
 
+@app.route('/login')
+def login():  
+    return render_template('login.html')
+
+@app.route('/forgot_pwd')
+def forgot_pwd(): 
+    return render_template('forgot_pwd.html')
+
+@app.route('/sign_in')
+def sign_in():
+   return render_template('sign_in.html')
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
