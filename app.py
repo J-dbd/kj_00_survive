@@ -11,8 +11,8 @@ app = Flask(__name__)
 
 load_dotenv()
 app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
-
-client = MongoClient('mongodb://jiwon:jungle@43.200.163.82', 27017)
+MONGO_DB=os.getenv('MONGO_DB')
+client = MongoClient(MONGO_DB, 27017)
 db = client.jungle
 
 @app.route('/')
@@ -27,6 +27,38 @@ def getGroup():
    return jsonify({'result': 'success', 'group': groups})
 
 
+#####################
+#회원가입과 환영페이지 #
+######################      
+#회원가입
+@app.route('/sign_in', methods=['GET','POST'])
+def sign_in():
+   if request.method=='POST':
+      #print("request.form",request.form.to_dict())
+      id=request.form['id']
+      pw=request.form['password']
+      name=request.form['name']
+      email=request.form['email']
+      db['user'].insert_one({
+         'id':id,
+         'password':pw,
+         'name':name,
+         'email':email,
+      })
+      return jsonify({'result':'success'})
+   else:
+      return render_template('login.html')
+
+#환영페이지
+@app.route('/pop')
+def pop():
+   return render_template('pop.html')
+
+#############
+# JWT Token #
+#############
+
+#로그인, jwt 토큰 발급
 @app.route('/login', methods=['POST','GET'])
 def login():
    if request.method=='POST':
@@ -34,7 +66,9 @@ def login():
       pw=request.form['password']
       isUser=db['user'].find_one({'id':id})
       if isUser and isUser['password']==pw:#create jwt token
+         name=isUser['name']
          payload={"user":id,
+                  "name":name,
             "exp":datetime.utcnow()+timedelta(seconds=60*60*24)}
          token=jwt.encode(
             payload=payload,
@@ -52,6 +86,26 @@ def login():
       
    else:
       return render_template('login.html')
+   
+#JWT토큰 검증 API
+@app.route('/validator',methods=['POST'])
+def validator():
+   
+   header_data=request.form['token']
+   print('header_data',header_data)
+   try:
+      data=jwt.decode(header_data,key=app.config['SECRET_KEY'],
+               algorithms="HS256")
+      #토큰이 유효할시 id, name반환
+      return jsonify({'result':"success",'data':data})
+   except jwt.ExpiredSignatureError:
+      msg='Signature has expired'
+      return jsonify({'result':"fail",'data':msg})
+   
+
+##############
+# ID/PW 찾기 #
+##############
 
 #아이디/비밀번호 찾기
 @app.route('/forgot_pwd',methods=['GET','POST'])
@@ -106,27 +160,7 @@ def find_pwd():
          return jsonify({'result':'success','data':data})
    else:
       return jsonify({'result':'fail','data':'nothing'})
-      
-#회원가입
-@app.route('/sign_in', methods=['GET','POST'])
-def sign_in():
-   if request.method=='POST':
-      #print("request.form",request.form.to_dict())
-      id=request.form['id']
-      pw=request.form['password']
-      name=request.form['name']
-      email=request.form['email']
-      db['user'].insert_one({
-         'id':id,
-         'password':pw,
-         'name':name,
-         'email':email,
-      })
-      return jsonify({'result':'success'})
-   else:
-      return render_template('login.html')
-@app.route('/welcome')
-def welcome():
-   return render_template('welcome.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
