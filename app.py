@@ -1,11 +1,21 @@
 from flask import Flask, render_template, url_for, request, session, redirect, flash, jsonify
-from pymongo import MongoClient, UpdateOne
+
+from pymongo import MongoClient,UpdateOne
+import bcrypt
+import jwt
+from datetime import datetime, timedelta
+from functools import wraps
+import os 
+from dotenv import load_dotenv
 from bson.objectid import ObjectId
-import bcrypt, datetime
 
 app = Flask(__name__)
 
-client = MongoClient('mongodb://minkyu:jungle@13.125.133.22',27017)
+load_dotenv()
+app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
+MONGO_DB=os.getenv('MONGO_DB')
+client = MongoClient(MONGO_DB, 27017)
+
 db = client.jungle
 
 def get_week_number(date_str):
@@ -13,28 +23,164 @@ def get_week_number(date_str):
         # 날짜 문자열을 datetime 객체로 변환
         date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
 
-        # 날짜로부터 해당 주차 계산
-        week_number = date.isocalendar()[1]
 
-        return week_number
-    except ValueError:
-        return "날짜 형식이 잘못되었습니다."
 
-@app.route('/')
+@app.route('/api/list', methods=['GET'])
+def getGroup():
+   groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
+   print(groups)
+   return jsonify({'result': 'success', 'group': groups})
+  
+          # 날짜로부터 해당 주차 계산
+        #week_number = date.isocalendar()[1]
+
+
+        #return week_number
+    #except ValueError:
+        #return "날짜 형식이 잘못되었습니다."
+
+
+
+#####################
+#회원가입과 환영페이지 #
+######################      
+#회원가입
+@app.route('/sign_in', methods=['GET','POST'])
+def sign_in():
+   if request.method=='POST':
+      #print("request.form",request.form.to_dict())
+      id=request.form['id']
+      pw=request.form['password']
+      name=request.form['name']
+      email=request.form['email']
+      db['user'].insert_one({
+         'id':id,
+         'password':pw,
+         'name':name,
+         'email':email,
+      })
+      return jsonify({'result':'success'})
+   else:
+      return render_template('login.html')
+
+#환영페이지
+@app.route('/pop')
+def pop():
+   return render_template('pop.html')
+
+#############
+# JWT Token #
+#############
+
+#로그인, jwt 토큰 발급
+@app.route('/login', methods=['POST','GET'])
 def login():
-   return render_template('login.html')
-#
+   if request.method=='POST':
+      id=request.form['id']
+      pw=request.form['password']
+      isUser=db['user'].find_one({'id':id})
+      if isUser and isUser['password']==pw:#create jwt token
+         name=isUser['name']
+         payload={"user":id,
+                  "name":name,
+            "exp":datetime.utcnow()+timedelta(seconds=60*60*24)}
+         token=jwt.encode(
+            payload=payload,
+            key=app.config['SECRET_KEY'],
+            algorithm="HS256"
+         )
+         return jsonify({'result':'success',
+                        'access_token':token})
+      else:
+         if isUser==None:
+            msg="아이디가 존재하지 않습니다."
+         elif isUser and isUser['password']!=pw:
+            msg="비밀번호가 올바르지 않습니다."
+         return jsonify({'result':'fail','reason':msg})
+      
+   else:
+      return render_template('login.html')
+   
+#JWT토큰 검증 API
+@app.route('/validator',methods=['POST'])
+def validator():
+   
+   header_data=request.form['token']
+   print('header_data',header_data)
+   try:
+      data=jwt.decode(header_data,key=app.config['SECRET_KEY'],
+               algorithms="HS256")
+      #토큰이 유효할시 id, name반환
+      return jsonify({'result':"success",'data':data})
+   except jwt.ExpiredSignatureError:
+      msg='Signature has expired'
+      return jsonify({'result':"fail",'data':msg})
+   
+
+##############
+# ID/PW 찾기 #
+##############
+
+#아이디/비밀번호 찾기
+@app.route('/forgot_pwd',methods=['GET','POST'])
+def forgot_pwd(): 
+   if request.method=='POST':
+      name=request.form['name']
+      email=request.form['email']
+      isUser=db['user'].find_one({'name':name,'email':email})
+      if isUser==None:
+         msg='존재하지 않는 유저입니다. 이름 혹은 이메일을 다시 확인해주세요.'
+         return jsonify({'result':'fail','reason':msg})
+      else:
+         user_id=isUser['id']
+         return jsonify({'result':'success','user_id':user_id})
+   else:
+      return render_template('forgot_pwd.html')
+
+#아이디 찾기   
+@app.route('/find_id',methods=['GET','POST'])
+def find_id(): 
+   if request.method=='POST':
+      name=request.form['name']
+      email=request.form['email']
+      isUser=db['user'].find_one({'name':name,'email':email})
+      if isUser==None:
+         msg='이름 혹은 이메일을 다시 확인해주세요.'
+         return jsonify({'result':'fail','data':msg})
+      else:
+         user_id=isUser['id']
+         name=isUser['name']
+         data={'user_id':user_id,'name':name}
+         return jsonify({'result':'success','data':data})
+   else:
+      return jsonify({'result':'fail','data':'nothing'})
+
+#비밀번호 찾기 
+@app.route('/find_pwd',methods=['GET','POST'])
+def find_pwd(): 
+   if request.method=='POST':
+      id=request.form['id']
+      name=request.form['name']
+      email=request.form['email']
+      isUser=db['user'].find_one({'id':id,'name':name,'email':email})
+      if isUser==None:
+         msg='아이디, 이름, 이메일을 다시 확인해주세요.'
+         return jsonify({'result':'fail','data':msg})
+      else:
+         user_id=isUser['id']
+         name=isUser['name']
+         pwd=isUser['password']
+         data={'user_id':user_id,'name':name,'password':pwd}
+         return jsonify({'result':'success','data':data})
+   else:
+      return jsonify({'result':'fail','data':'nothing'})
+
 @app.route('/select_team')
 def select_team():
    return render_template('select_team.html')
 
-@app.route('/forgot_pwd')
-def forgot_pwd():
-    return render_template('forgot_pwd.html')
 
-@app.route('/sign_in')
-def sign_in():
-   return render_template('sign_in.html')
+
 
 @app.route('/')
 def home():
