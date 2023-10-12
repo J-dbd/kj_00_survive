@@ -36,6 +36,10 @@ def createTeam():
 def teamPage():
    return render_template('team_page.html')
 
+@app.route('/api/getDate', methods=['GET'])
+def getDate():
+    target_team = list(db.target_team.find({}, {'_id': False}))
+    return jsonify({'result': 'success', 'target_team': target_team})
 
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
@@ -43,6 +47,12 @@ def getTeam():
     sorted_teams = sorted(teams, key=lambda x: (x['week'], x['name']))
     print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
+
+@app.route('/api/getTarget', methods=['GET'])
+def getTarget():
+    targets = list(db.target.find({}, {'_id': False}))
+    sorted_targets = sorted(targets, key=lambda x: (x['target_date'], x['member_id']))
+    return jsonify({'result': 'success', 'targets': sorted_targets})
 
 @app.route('/api/postTeam', methods=['POST'])
 def postTeam():
