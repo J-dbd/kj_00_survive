@@ -157,7 +157,10 @@
         console.log("error: " + error);
       },
       success: function (res) {
-        console.log("post suceess")
+        console.log("post suceess", selectedValue)
+
+        localStorage.setItem("team_num", selectedValue)
+        //console.log("ddd", localStorage.getItem("team_num"))
         window.location.href = "{{ url_for('teamPage') }}"
       }
     })
