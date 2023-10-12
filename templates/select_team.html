@@ -119,24 +119,33 @@
     //console.log("user_data", typeof (user_data))
     let id = user_data['id']
     let name = user_data['name']
-    let tempHtml = `<select id="week${week}_team" onchange="postData('${id}', '${name}')" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-6">
+    let tempHtml = `<select id="week${week}_team" onchange="postData('${id}', '${name}', '${week}')" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-6">
                         <option selected>정글 3기 ${week}주차</option>`;
     $('#group_by_week').append(tempHtml)
   }
-
   function initTeam(week, team_number_arr) {
     for (let i = 0; i < team_number_arr.length; i++) {
-      let tempHtml = `<option value="${team_number_arr[i]}">${team_number_arr[i]}</option>`
+      let tempHtml = `<option id='opt' value="${team_number_arr[i]}">${team_number_arr[i]}</option>`
       $(`#week${week}_team`).append(tempHtml)
     }
   }
 
-  function postData(id, name) {
+
+  function postData(id, name, week) {
     console.log("DDD", id, name)
     //console.log("user_data", JSON.stringify(data))
+
+    var selectElement = document.getElementById(`week${week}_team`)
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+    var selectedValue = selectedOption.value;
+    var selectedText = selectedOption.text;
+    //console.log("D", selectedValue, selectedText)
+
     user_data = {
       'id': id,
-      'name': name
+      'name': name,
+      'team': selectedValue,
     }
     $.ajax({
       url: '/team_page',
@@ -153,7 +162,6 @@
       }
     })
   }
-
 
 </script>
 

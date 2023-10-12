@@ -209,8 +209,9 @@ def teamPage():
    if request.method=="POST":
       id=request.form['id']
       name=request.form['name']
-      print("id/name",id,name)
-      return render_template('team_page.html',id=id,name=name)
+      team=request.form['team']
+      print("id/name/team",id,name,team)
+      return render_template('team_page.html',id=id,name=name,team=team)
    return render_template('team_page.html')
 
 @app.route('/api/getDate', methods=['GET'])
