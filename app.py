@@ -9,6 +9,11 @@ import os
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token, get_jwt_identity, unset_jwt_cookies, create_refresh_token,get_jwt
+)
+
+
 app = Flask(__name__)
 
 client = MongoClient('mongodb://minkyu:jungle@52.78.30.81',27017)
@@ -22,7 +27,6 @@ def get_week_number(date_str):
 
         # 날짜로부터 해당 주차 계산
         week_number = date.isocalendar()[1]
-
         return week_number
     except ValueError:
         return "날짜 형식이 잘못되었습니다."
@@ -57,7 +61,7 @@ def pop():
 #############
 # JWT Token #
 #############
-
+jwt=JWTManager(app)
 #로그인, jwt 토큰 발급
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -67,16 +71,14 @@ def login():
       isUser=db['user'].find_one({'id':id})
       if isUser and isUser['password']==pw:#create jwt token
          name=isUser['name']
-         payload={"user":id,
-                  "name":name,
-            "exp":datetime.utcnow()+timedelta(seconds=60*60*24)}
-         token=jwt.encode(
-            payload=payload,
-            key=app.config['SECRET_KEY'],
-            algorithm="HS256"
-         )
+         additional_claims={
+            'name':name,
+         }
+         expires_delta=timedelta(seconds=60*60*10)
+         access_token = create_access_token(identity=id,additional_claims=additional_claims,expires_delta=expires_delta)
+         #print("access_token",access_token)
          return jsonify({'result':'success',
-                        'access_token':token})
+                        'access_token':access_token})
       else:
          if isUser==None:
             msg="아이디가 존재하지 않습니다."
@@ -86,22 +88,28 @@ def login():
       
    else:
       return render_template('login.html')
-   
+
 #JWT토큰 검증 API
-@app.route('/validator',methods=['POST'])
-def validator():
-   
-   header_data=request.form['token']
-   print('header_data',header_data)
-   try:
-      data=jwt.decode(header_data,key=app.config['SECRET_KEY'],
-               algorithms="HS256")
-      #토큰이 유효할시 id, name반환
+@app.route("/validator", methods=["GET"])
+@jwt_required(optional=True)
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+   current_identity = get_jwt_identity()
+   if current_identity:
+      data=get_jwt()
+      #print(data)
+      data={'id':data['sub'],'name':data['name']}
       return jsonify({'result':"success",'data':data})
-   except jwt.ExpiredSignatureError:
+   else:
       msg='Signature has expired'
       return jsonify({'result':"fail",'data':msg})
-   
+
+@app.route("/test")
+def test():
+   return render_template("test.html")
+
+
+@app.route('/logout',methods=[])   
 
 ##############
 # ID/PW 찾기 #
@@ -165,6 +173,13 @@ def find_pwd():
 def select_team():
    return render_template('select_team.html')
 
+@app.route('/api/getTeamNum')
+def getTeamNum():
+   teams = list(db.team.find({}, {'team_member':True,'number':True,'_id': False}))
+   print(teams)
+   #db.team.insert_one({'end_date':'2023-11-11','number':11,'start_date':'2023-11-18','team_member':['ee1122','kyumin','ee112233'],'week':2})
+   return
+
 @app.route('/')
 def home():
    return render_template('team_page.html')
@@ -177,8 +192,14 @@ def selectTeam():
 def createTeam():
    return render_template('create_team.html')
 
-@app.route('/team_page')
+@app.route('/team_page',methods=['GET','POST'])
 def teamPage():
+   if request.method=="POST":
+      id=request.form['id']
+      name=request.form['name']
+      team=request.form['team']
+      print("id/name/team",id,name,team)
+      return render_template('team_page.html',id=id,name=name,team=team)
    return render_template('team_page.html')
 
 @app.route('/api/getDate', methods=['GET'])
