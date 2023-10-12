@@ -24,15 +24,17 @@ def getGroup():
    print(groups)
    return jsonify({'result': 'success', 'group': groups})
 
-          # 날짜로부터 해당 주차 계산
-        #week_number = date.isocalendar()[1]
+def get_week_number(date_str):
+   try:
+       # 날짜 문자열을 datetime 객체로 변환
+       date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
 
+       # 날짜로부터 해당 주차 계산
+       week_number = date.isocalendar()[1]
 
-        #return week_number
-    #except ValueError:
-        #return "날짜 형식이 잘못되었습니다."
-
-
+       return week_number
+   except ValueError:
+       return "날짜 형식이 잘못되었습니다."
 
 #####################
 #회원가입과 환영페이지 #
