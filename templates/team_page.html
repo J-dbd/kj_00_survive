@@ -151,7 +151,7 @@
         let id = ''
         let name = ''
         getDate();
-        getTarget();
+
         //get token
         let data = localStorage.getItem('token') || ''
         if (data !== '') {
@@ -178,6 +178,7 @@
                         id = data['id']
                         name = data['name']
                         addHeaderUserName(name)
+                        getTarget(id);
                     }
                 }
 

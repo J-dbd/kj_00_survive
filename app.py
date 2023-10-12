@@ -257,11 +257,15 @@ def postTeam():
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})
 
-@app.route('/target_list')
+@app.route('/target_list', methods=['GET'])
 def target_list():
-    team = {"team_member": ['minkyu', 'chanu'], "start_date": "2023-10-10", "name": 3}
+    _id = request.args.get('_id')
+    member_name = db.user.find_one({"id":_id}, {"name":1, "_id":0})
+    member_name = member_name['name']
 
-    data = list(db.target.find({}, {"_id":1, "member_id":1, "text":1, "state":1}))
+    date = request.args.get('date')
+
+    data = list(db.target.find({"target_date": "2023-10-"+date}, {"_id":1, "member_id":1, "text":1, "state":1}))
     result = {}
     total_count = len(data)
     cnt = 0
@@ -272,23 +276,27 @@ def target_list():
         else:
             item['state'] = ""
         text_state = [item['text'], item['state'], item['_id']]
-        if not result.get(item['member_id']):
-            result[item['member_id']] = []
-            result[item['member_id']].append(text_state)
+        user_name = db.user.find_one({"id":item['member_id']})
+        user_name = user_name['name']
+        if not result.get(user_name):
+            result[user_name] = []
+            result[user_name].append(text_state)
         else:
-            result[item['member_id']].append(text_state)
+            result[user_name].append(text_state)
+
     print(result)
 
-    percentage = cnt/total_count * 100
-    datetime_str = "2023-10-11"
-    date_format = '%Y-%m-%d'
+    if cnt == 0:
+        percentage = 0
+    else:
+        percentage = cnt / total_count * 100
+
+    datetime_str = "2023-10-"+date+" 23:59:59"
+    date_format = '%Y-%m-%d %H:%M:%S'
 
     date_obj = datetime.strptime(datetime_str, date_format)
 
-    print(date_obj)
-    print(datetime.now())
-
-    return render_template('target_list.html',result=result, percentage = percentage, now = datetime.now(), current = date_obj, member_id="kyumin", target_date="2023-10-11")
+    return render_template('target_list.html',result=result, percentage = f"{percentage:.2f}", now = datetime.now(), current = date_obj, member_id=_id, target_date="2023-10-"+date, _id = member_name, date = date)
 
 @app.route('/api/check', methods=['POST'])
 def is_checked():

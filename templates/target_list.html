@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>일별 개인 목표</title>
+    <title>일일 개인 목표</title>
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
@@ -21,11 +21,12 @@
                 </span>
                 <div>
                     <div class="font-semibold text-xl">
-                        정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
-                        중 입니다.
+                        정글 3기 <font class="text-green-700">{{_id}}</font>님 정글에서 <font id="time-spent"
+                            class="text-green-700"></font>생존 중 입니다.
                     </div>
                     <div class="flex justify-between m-2 text-xl font-semibold">
-                        <button class="w-[195px] h-[40px] bg-green-700 p-1">캘린더 보기</button>
+                        <button class="w-[195px] h-[40px] bg-green-700 p-1"
+                            onclick="window.location.href=`{{url_for('teamPage')}}`">캘린더 보기</button>
                         <button data-modal-target="defaultModal" data-modal-toggle="defaultModal"
                             class="w-[195px] h-[40px] bg-green-700 p-1">개인 목표 작성</button>
                         <div id="defaultModal" tabindex="-1" aria-hidden="true"
@@ -68,7 +69,7 @@
         <div class="flex justify-center items-center">
             <div class="relative bg-white m-10 px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 rounded">
                 <div class="text-center text-3xl font-semibold">
-                    ??월??일
+                    10월{{date}}일
                 </div>
                 <div class="flex">
                     {% for user_name, user_text in result.items() %}
@@ -84,7 +85,7 @@
                                         current %} class="text-red-600" {% else %} {% endif %}>{{item[0]}}</span>
                                         <div class="flex">
                                             <input type="checkbox"
-                                                class="mx-2 w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500"
+                                                class="cursor-pointer mx-2 w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500"
                                                 {{item[1]}} onclick="is_checked('{{item[2]}}', '{{item[1]}}')">
                                             <div onclick="delete_item('{{item[2]}}')" class="cursor-pointer">
                                                 <svg xmlns="http://www.w3.org/2000/svg" height="1em"
@@ -115,65 +116,33 @@
                 </div>
             </div>
             <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black"
-                onclick="outTeam()">
+                onclick="window.location.href=`{{ url_for('selectTeam') }}` ">
                 부족에서 나가기
             </span>
         </footer>
     </div>
 </body>
+<script src="{{url_for('static', filename='index.js')}}"></script>
 <script>
     $(document).ready(function () {
+        var targetDate = new Date('2023-10-10T00:00:00Z');
 
-        let id = ''
-        let name = ''
-        //get token
-        let data = localStorage.getItem('token') || ''
-        if (data !== '') {
-            token_data = { 'token': data }
-            $.ajax({
-                url: '/validator',
-                type: "GET",
-                data: {},
-                headers: { "Authorization": 'Bearer ' + data },
-                error: function (request, status, error) {
-                    console.log("code: " + request.status)
-                    console.log("message: " + request.responseText)
-                    console.log("error: " + error);
-                },
-                success: function (res) {
-                    //토큰 유효성 검사
-                    if (res['result'] == 'fail') {
-                        //console.log(res)
-                        window.location.href = '{{ url_for("pop") }}'
-                    };
-                    if (res['result'] == 'success') {
-                        data = res['data']
-                        //console.log(data)
-                        id = data['id']
-                        name = data['name']
-                    }
-                }
+        function updateTimeSpent() {
+            var currentDate = new Date();
+            var timeDifference = currentDate - targetDate;
 
-            })
-        }
-        //if token doesn't exist
-        else if (data == '') {
-            window.location.href = '{{ url_for("pop") }}'
+            var days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            $('#time-spent').html(days + '일 ' + hours + '시간 ' + minutes + '분 ' + seconds + '초 ');
         }
 
-        setTimeout(() => {
-            $("#main").addClass("show")
-        }, 800)
-        //console.log('id/name', id, name)
-    })
+        updateTimeSpent();
 
-    function outTeam() {
-        localStorage.removeItem('team_num')
-        localStorage.removeItem('week')
-        window.location.href = `{{ url_for('selectTeam') }}`
-    }
-
-
+        setInterval(updateTimeSpent, 1000);
+    });
 </script>
 
 </html>
