@@ -73,7 +73,6 @@ def postTeam():
 
     week = present_week_number - start_week_number
 
-    # week 계산 함수 작성 필요
     insert_dict = {"name": int(received_name), "start_date": translated_start_data, "end_date": translated_end_data, "team_member": {}, "week": week}
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})

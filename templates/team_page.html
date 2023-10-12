@@ -62,13 +62,13 @@
                                     <h2 class="ml-2 text-xl font-bold leading-none">September, 2023</h2>
                                 </div>
                                 <div class="grid grid-cols-7 mt-4">
-                                    <div class="pl-1 text-sm">Sun</div>
+                                    <div class="pl-1 text-sm"><font class="text-red-700">Sun</font></div>
                                     <div class="pl-1 text-sm">Mon</div>
                                     <div class="pl-1 text-sm">Tue</div>
                                     <div class="pl-1 text-sm">Wed</div>
                                     <div class="pl-1 text-sm">Thu</div>
                                     <div class="pl-1 text-sm">Fri</div>
-                                    <div class="pl-1 text-sm">Sat</div>
+                                    <div class="pl-1 text-sm"><font class="text-blue-700">Sat</font></div>
                                 </div>
                                 <div id="calendar_date"
                                     class="grid flex-grow w-full h-auto grid-cols-7 grid-rows-5 gap-px pt-px mt-1 bg-gray-200">
@@ -183,13 +183,7 @@
     $(`#${date}`).empty();
     const member_id_arr = [...member_id_set];
     for(let i=0; i<member_id_arr.length; i++){
-        var temp_html;
-        if (i%2){
-            temp_html = `<li>${member_id_arr[i]}</li>`;
-        }
-        else{
-            temp_html = `<li>${member_id_arr[i]}</li>`;
-        }
+        var temp_html = `<li>${member_id_arr[i]}</li>`;
         $(`#calender-${date}`).append(temp_html);
     }
   }
