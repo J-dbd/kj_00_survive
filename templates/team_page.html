@@ -26,7 +26,7 @@
                 </span>
                 <div>
                     <div class="font-semibold text-xl">
-                        정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
+                        정글 3기 <font class="text-green-700">???</font>님 정글에서 <font id="time-spent" class="text-green-700"></font>시간 생존
                         중 입니다.
                     </div>
                     <div class="flex justify-end m-2 text-xl font-semibold">
@@ -37,7 +37,8 @@
         </header>
         <div class="flex justify-center items-center mb-8">
             <div class="flex flex-row">
-                <div class="basis-1/5 bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4">
+                <div class="flex">
+                    <div class="basis-1/5 bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4">
                     <p id="start_to_end_date"
                         class="flex justify-center text-1xl font-semibold whitespace-nowrap text-black my-6">start_date ~
                         end_date</p>
@@ -45,7 +46,8 @@
                         <font class="text-green-700">부족</font>&nbsp;목표
                     </p>
                     <hr class="mb-6">
-                    <div id="team_goal_board" class="relative">
+                    <div class="flex flex-col h-[580px] justify-between">
+                        <div id="team_goal_board" class="relative">
                         <input type="text" id="disabled_outlined"
                             class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer my-2"
                             placeholder=" " disabled />
@@ -87,6 +89,8 @@
                             </div>
                         </div>
                     </div>
+                    </div>
+                </div>
                 </div>
                 <div
                     class="basis-4/5  bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4 max-w-[80%]">
@@ -114,15 +118,13 @@
                 </div>
             </div>
         </div>
-        <footer class="flex flex-wrap justify-between bg-gray-500 p-4">
-            <div class="w-[1000px] h-6 bg-gray-200 rounded-full">
-                <div class="h-6 bg-green-700 rounded-full" style="width: {{percentage}}%"></div>
-            </div>
-            <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black"
-                onclick="window.location.href=`{{ url_for('selectTeam') }}`">
-                부족에서 나가기
-            </span>
-        </footer>
+    <footer class="flex flex-wrap justify-between bg-gray-50 p-4 my-10">
+        <div class="w-[1000px] h-6 rounded-full">
+        </div>
+        <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black" onclick="window.location.href=`{{ url_for('selectTeam') }}` ">
+            부족에서 나가기
+        </span>
+    </footer>
     </div>
 </body>
 <script src="{{url_for('static', filename='index.js')}}"></script>
@@ -132,6 +134,26 @@
         getDate();
         getTarget(_id);
   });
+
+    $(document).ready(function() {
+        var targetDate = new Date('2023-10-10T00:00:00Z');
+
+        function updateTimeSpent() {
+            var currentDate = new Date();
+            var timeDifference = currentDate - targetDate;
+
+            var days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            $('#time-spent').html(days + '일 ' + hours + '시간 ' + minutes + '분 ' + seconds + '초 ');
+        }
+
+        updateTimeSpent();
+
+        setInterval(updateTimeSpent, 1000);
+    });
 
   function addTeamGoal(){
     var new_team_goal = document.getElementById('new_team_goal').value;
