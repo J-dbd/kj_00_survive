@@ -66,5 +66,31 @@ def target_list():
 
     return render_template('target_list.html',result=result, percentage = percentage)
 
+@app.route('/target_team_list')
+def target_team_list():
+    team = {"team_member": ['minkyu', 'chanu'], "start_date": "2023-10-10", "name": 3}
+
+    data = list(db.target.find({}, {"_id":0, "member_id":1, "text":1, "state":1}))
+    result = {}
+    total_count = len(data)
+    cnt = 0
+    for item in data:
+        if item['state'] == True:
+            item['state'] = "checked"
+            cnt += 1
+        else:
+            item['state'] = ""
+        text_state = [item['text'], item['state']]
+        if not result.get(item['member_id']):
+            result[item['member_id']] = []
+            result[item['member_id']].append(text_state)
+        else:
+            result[item['member_id']].append(text_state)
+    print(result)
+
+    percentage = cnt/total_count * 100
+
+    return render_template('target_list.html',result=result, percentage = percentage)
+
 if __name__ == '__main__':  
    app.run('0.0.0.0',port=5000,debug=True)

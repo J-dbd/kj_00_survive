@@ -39,8 +39,8 @@
                 {% for item in user_text %}
                 <div class="m-2 p-2">
                     <div class="flex justify-between items-center">
-                    <span>{{item[0]}}</span>
-                    <input type="checkbox" class="mx-2 w-[16px] h-[16px]" {{item[1]}}>
+                    <span{% if item[1] == "checked" %} class="text-green-600" {% endif %}>{{item[0]}}</span>
+                    <input type="checkbox" class="mx-2 w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500" {{item[1]}} onclick="is_checked()">
                     </div>
                 </div>
                 {% endfor %}
@@ -50,9 +50,15 @@
     </div>
 </div>
     </div>
-    <footer class="flex flex-wrap justify-between bg-gray-500 p-4">
-        <div class="w-[1000px] h-6 bg-gray-200 rounded-full">
-          <div class="h-6 bg-green-700 rounded-full" style="width: {{percentage}}%"></div>
+    <footer class="flex flex-wrap justify-between bg-gray-50 p-4 my-10">
+        <div class="w-[1000px] h-6 rounded-full">
+            <div class="flex justify-between mb-1 font-semibold">
+                <span class="text-2xl">진행상황</span>
+                <span class="text-xl">{{percentage}}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-6">
+                <div class="bg-green-600 h-6 rounded-full" style="width: {{percentage}}%"></div>
+            </div>
         </div>
         <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black" onclick="window.location.href=`{{ url_for('selectTeam') }}` ">
             부족에서 나가기
