@@ -14,6 +14,15 @@
         .group:hover .group-hover\:flex {
             display: flex;
         }
+
+        #main {
+            display: none;
+
+        }
+
+        #main.show {
+            display: block;
+        }
     </style>
 </head>
 
@@ -25,88 +34,92 @@
                     <font class="text-green-700">크래프톤</font> 정글 3기
                 </span>
                 <div>
-                    <div class="font-semibold text-xl">
-                        정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
-                        중 입니다.
+                    <div id="header_username">
+
                     </div>
                     <div class="flex justify-end m-2 text-xl font-semibold">
-                        <button onclick="window.location.href=`{{ url_for('login') }}`" class="w-[195px] h-[40px] bg-green-700 p-1 text-white font-bold rounded">로그아웃</button>
+                        <button onclick="logout()"
+                            class="w-[195px] h-[40px] bg-green-700 p-1 text-white font-bold rounded">로그아웃</button>
                     </div>
                 </div>
             </div>
         </header>
-        <div class="flex justify-center items-center mb-8">
-            <div class="flex flex-row">
-                <div class="basis-1/5 bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4">
-                    <p id="start_to_end_date"
-                        class="flex justify-center text-1xl font-semibold whitespace-nowrap text-black my-6">start_date ~
-                        end_date</p>
-                    <p class="flex justify-center text-3xl font-semibold whitespace-nowrap text-black mb-6">
-                        <font class="text-green-700">부족</font>&nbsp;목표
-                    </p>
-                    <hr class="mb-6">
-                    <div id="team_goal_board" class="relative">
-                        <input type="text" id="disabled_outlined"
-                            class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer my-2"
-                            placeholder=" " disabled />
-                        <label for="disabled_outlined"
-                            class="absolute text-sm text-black dark:text-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">team_goal_1</label>
-                    </div>
-                    <div class="self-end">
-                        <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal"
-                            class="bg-green-700 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            부족 목표 추가
-                        </button>
-                        <div id="authentication-modal" tabindex="-1" aria-hidden="true"
-                            class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-                            <div class="relative w-full max-w-md max-h-full">
-                                <div class="relative bg-white rounded-lg shadow dark:bg-white">
-                                    <button type="button"
-                                        class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                        data-modal-hide="authentication-modal">
-                                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                            viewBox="0 0 14 14">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                        </svg>
-                                        <span class="sr-only">Close modal</span>
-                                    </button>
-                                    <div class="px-6 py-6 lg:px-8">
-                                        <form class="space-y-6" action="#">
-                                            <p class="text-center text-2xl font-semibold">신규 부족 목표</p>
-                                            <div>
-                                                <input name="new_team_goal" id="new_team_goal"
-                                                    class="bg-white border border-green-300 text-gray-900 text-sm rounded-lg focus:ring-white-500 focus:border-green-500 block w-full p-2.5 dark:bg-white dark:border-green-500 dark:placeholder-green-700 dark:text-black text-center">
-                                            </div>
-                                            <button type="submit"
-                                                onclick="addTeamGoal();"
-                                                class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">추가</button>
-                                        </form>
+        <div id="main">
+            <div class="flex justify-center items-center mb-8">
+                <div class="flex flex-row">
+                    <div class="basis-1/5 bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4">
+                        <p id="start_to_end_date"
+                            class="flex justify-center text-1xl font-semibold whitespace-nowrap text-black my-6">
+                            start_date
+                            ~
+                            end_date</p>
+                        <p class="flex justify-center text-3xl font-semibold whitespace-nowrap text-black mb-6">
+                            <font class="text-green-700">부족</font>&nbsp;목표
+                        </p>
+                        <hr class="mb-6">
+                        <div id="team_goal_board" class="relative">
+                            <input type="text" id="disabled_outlined"
+                                class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer my-2"
+                                placeholder=" " disabled />
+                            <label for="disabled_outlined"
+                                class="absolute text-sm text-black dark:text-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">team_goal_1</label>
+                        </div>
+                        <div class="self-end">
+                            <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal"
+                                class="bg-green-700 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                부족 목표 추가
+                            </button>
+                            <div id="authentication-modal" tabindex="-1" aria-hidden="true"
+                                class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                <div class="relative w-full max-w-md max-h-full">
+                                    <div class="relative bg-white rounded-lg shadow dark:bg-white">
+                                        <button type="button"
+                                            class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                            data-modal-hide="authentication-modal">
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2"
+                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
+                                        <div class="px-6 py-6 lg:px-8">
+                                            <form class="space-y-6" action="#">
+                                                <p class="text-center text-2xl font-semibold">신규 부족 목표</p>
+                                                <div>
+                                                    <input name="new_team_goal" id="new_team_goal"
+                                                        class="bg-white border border-green-300 text-gray-900 text-sm rounded-lg focus:ring-white-500 focus:border-green-500 block w-full p-2.5 dark:bg-white dark:border-green-500 dark:placeholder-green-700 dark:text-black text-center">
+                                                </div>
+                                                <button type="submit" onclick="addTeamGoal();"
+                                                    class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">추가</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div
-                    class="basis-4/5  bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4 max-w-[80%]">
-                    <div class="text-gray-700">
-                        <div class="flex flex-grow overflow-auto my-10">
-                            <div class="flex flex-col flex-grow">
-                                <div class="flex items-center mt-4">
-                                    <h2 class="ml-2 text-xl font-bold leading-none">September, 2023</h2>
-                                </div>
-                                <div class="grid grid-cols-7 mt-4">
-                                    <div class="pl-1 text-sm text-red-700">Sun</div>
-                                    <div class="pl-1 text-sm">Mon</div>
-                                    <div class="pl-1 text-sm">Tue</div>
-                                    <div class="pl-1 text-sm">Wed</div>
-                                    <div class="pl-1 text-sm">Thu</div>
-                                    <div class="pl-1 text-sm">Fri</div>
-                                    <div class="pl-1 text-sm text-blue-700">Sat</div>
-                                </div>
-                                <div id="calendar_date"
-                                    class="grid flex-grow w-full h-auto grid-cols-7 grid-rows-5 gap-px pt-px mt-1 bg-gray-200">
+                    <div
+                        class="basis-4/5  bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4 max-w-[80%]">
+                        <div class="text-gray-700">
+                            <div class="flex flex-grow overflow-auto my-10">
+                                <div class="flex flex-col flex-grow">
+                                    <div class="flex items-center mt-4">
+                                        <h2 class="ml-2 text-xl font-bold leading-none">September, 2023</h2>
+                                    </div>
+                                    <div class="grid grid-cols-7 mt-4">
+                                        <div class="pl-1 text-sm text-red-700">Sun</div>
+                                        <div class="pl-1 text-sm">Mon</div>
+                                        <div class="pl-1 text-sm">Tue</div>
+                                        <div class="pl-1 text-sm">Wed</div>
+                                        <div class="pl-1 text-sm">Thu</div>
+                                        <div class="pl-1 text-sm">Fri</div>
+                                        <div class="pl-1 text-sm text-blue-700">Sat</div>
+                                    </div>
+                                    <div id="calendar_date"
+                                        class="grid flex-grow w-full h-auto grid-cols-7 grid-rows-5 gap-px pt-px mt-1 bg-gray-200">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -127,23 +140,84 @@
 </body>
 <script src="{{url_for('static', filename='index.js')}}"></script>
 <script>
+
+
     $(document).ready(function () {
+        let id = ''
+        let name = ''
         getDate();
         getTarget();
-  });
+        //get token
+        let data = localStorage.getItem('token') || ''
+        if (data !== '') {
+            token_data = { 'token': data }
+            $.ajax({
+                url: '/validator',
+                type: "GET",
+                data: {},
+                headers: { "Authorization": 'Bearer ' + data },
+                error: function (request, status, error) {
+                    console.log("code: " + request.status)
+                    console.log("message: " + request.responseText)
+                    console.log("error: " + error);
+                },
+                success: function (res) {
+                    //토큰 유효성 검사
+                    if (res['result'] == 'fail') {
+                        //console.log(res)
+                        window.location.href = '{{ url_for("pop") }}'
+                    };
+                    if (res['result'] == 'success') {
+                        data = res['data']
+                        //console.log(data)
+                        id = data['id']
+                        name = data['name']
+                        addHeaderUserName(name)
+                    }
+                }
 
-  function addTeamGoal(start_date, end_date, team_number){
-    var new_team_goal = document.getElementById('new_team_goal').value;
-    console.log(new_team_goal);
-    initNewTeamGoal(new_team_goal);
-    postNewTeamGoal(start_date, end_date, team_number, new_team_goal);
-  }
+            })
+        }
+        //if token doesn't exist
+        else if (data == '') {
+            window.location.href = '{{ url_for("pop") }}'
+        }
 
-  function newTeamGoalModal(){
-    var temp_html = `<div class="mb-6">
+        setTimeout(() => {
+            $("#main").addClass("show")
+        }, 100)
+        //console.log('id/name', id, name)
+    })
+    //header
+    function logout() {
+        localStorage.removeItem('token')
+        location.reload()
+    }
+
+
+    function addTeamGoal(start_date, end_date, team_number) {
+        var new_team_goal = document.getElementById('new_team_goal').value;
+        console.log(new_team_goal);
+        initNewTeamGoal(new_team_goal);
+        postNewTeamGoal(start_date, end_date, team_number, new_team_goal);
+    }
+
+    function newTeamGoalModal() {
+        var temp_html = `<div class="mb-6">
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email address</label>
                         <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="john.doe@company.com" required>
                     </div>`
-  }
+    }
+
+    function addHeaderUserName(userName) {
+        var temp_html = `
+        <div class="font-semibold text-xl">
+            정글 3기 <font class="text-green-700">${userName}</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
+            중 입니다.
+        </div>
+        `
+        $('#header_username').append(temp_html)
+    }
 </script>
+
 </html>

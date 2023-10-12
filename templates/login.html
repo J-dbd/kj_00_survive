@@ -191,6 +191,7 @@
                 //console.log("res", res)
                 if (res['result'] == "success") {
                     localStorage.setItem('token', res.access_token);
+
                     alert("로그인에 성공하였습니다.")
                     window.location.href = "{{ url_for('home') }}"
                 }

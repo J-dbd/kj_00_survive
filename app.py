@@ -9,6 +9,11 @@ import os
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token, get_jwt_identity, unset_jwt_cookies, create_refresh_token,get_jwt
+)
+
+
 app = Flask(__name__)
 
 load_dotenv()
@@ -23,6 +28,12 @@ def get_week_number(date_str):
         # 날짜 문자열을 datetime 객체로 변환
         date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
 
+        # 날짜로부터 해당 주차 계산
+        week_number = date.isocalendar()[1]
+
+        return week_number
+    except ValueError:
+        return "날짜 형식이 잘못되었습니다."
 
 
 @app.route('/api/list', methods=['GET'])
@@ -30,16 +41,6 @@ def getGroup():
    groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
    print(groups)
    return jsonify({'result': 'success', 'group': groups})
-  
-          # 날짜로부터 해당 주차 계산
-        #week_number = date.isocalendar()[1]
-
-
-        #return week_number
-    #except ValueError:
-        #return "날짜 형식이 잘못되었습니다."
-
-
 
 #####################
 #회원가입과 환영페이지 #
@@ -71,7 +72,7 @@ def pop():
 #############
 # JWT Token #
 #############
-
+jwt=JWTManager(app)
 #로그인, jwt 토큰 발급
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -81,16 +82,14 @@ def login():
       isUser=db['user'].find_one({'id':id})
       if isUser and isUser['password']==pw:#create jwt token
          name=isUser['name']
-         payload={"user":id,
-                  "name":name,
-            "exp":datetime.utcnow()+timedelta(seconds=60*60*24)}
-         token=jwt.encode(
-            payload=payload,
-            key=app.config['SECRET_KEY'],
-            algorithm="HS256"
-         )
+         additional_claims={
+            'name':name,
+         }
+         expires_delta=timedelta(seconds=60*60*10)
+         access_token = create_access_token(identity=id,additional_claims=additional_claims,expires_delta=expires_delta)
+         #print("access_token",access_token)
          return jsonify({'result':'success',
-                        'access_token':token})
+                        'access_token':access_token})
       else:
          if isUser==None:
             msg="아이디가 존재하지 않습니다."
@@ -100,22 +99,28 @@ def login():
       
    else:
       return render_template('login.html')
-   
+
 #JWT토큰 검증 API
-@app.route('/validator',methods=['POST'])
-def validator():
-   
-   header_data=request.form['token']
-   print('header_data',header_data)
-   try:
-      data=jwt.decode(header_data,key=app.config['SECRET_KEY'],
-               algorithms="HS256")
-      #토큰이 유효할시 id, name반환
+@app.route("/validator", methods=["GET"])
+@jwt_required(optional=True)
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+   current_identity = get_jwt_identity()
+   if current_identity:
+      data=get_jwt()
+      #print(data)
+      data={'id':data['sub'],'name':data['name']}
       return jsonify({'result':"success",'data':data})
-   except jwt.ExpiredSignatureError:
+   else:
       msg='Signature has expired'
       return jsonify({'result':"fail",'data':msg})
-   
+
+@app.route("/test")
+def test():
+   return render_template("test.html")
+
+
+@app.route('/logout',methods=[])   
 
 ##############
 # ID/PW 찾기 #
