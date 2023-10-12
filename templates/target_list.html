@@ -16,10 +16,10 @@
         <span class="self-center text-3xl font-semibold whitespace-nowrap text-black"><font class="text-green-700">크래프톤</font> 정글 3기</span>
         <div>
             <div class="font-semibold text-xl">
-                정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존 중 입니다.
+                정글 3기 <font class="text-green-700">{{_id}}</font>님 정글에서 <font id="countdown" class="text-green-700"></font>시간 생존 중 입니다.
             </div>
             <div class="flex justify-between m-2 text-xl font-semibold">
-                <button class="w-[195px] h-[40px] bg-green-700 p-1">캘린더 보기</button>
+                <button class="w-[195px] h-[40px] bg-green-700 p-1" onclick="window.location.href=`{{url_for('teamPage')}}`">캘린더 보기</button>
                 <button data-modal-target="defaultModal" data-modal-toggle="defaultModal" class="w-[195px] h-[40px] bg-green-700 p-1">개인 목표 작성</button>
                 <div id="defaultModal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
                     <div class="relative w-full max-w-2xl max-h-full">
@@ -51,7 +51,7 @@
     <div class="flex justify-center items-center">
     <div class="relative bg-white m-10 px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 rounded">
     <div class="text-center text-3xl font-semibold">
-        ??월??일
+        10월{{date}}일
     </div>
     <div class="flex">
         {% for user_name, user_text in result.items() %}
@@ -98,4 +98,6 @@
 </div>
 </body>
 <script src="{{url_for('static', filename='index.js')}}"></script>
+<script>
+</script>
 </html>
