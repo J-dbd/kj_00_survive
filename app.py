@@ -12,16 +12,16 @@ from bson.objectid import ObjectId
 app = Flask(__name__)
 
 load_dotenv()
-app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
+# app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
 MONGO_DB=os.getenv('MONGO_DB')
-client = MongoClient(MONGO_DB, 27017)
+client = MongoClient("mongodb://minkyu:jungle@13.125.133.22", 27017)
 
 db = client.jungle
+
 
 @app.route('/api/list', methods=['GET'])
 def getGroup():
    groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
-   print(groups)
    return jsonify({'result': 'success', 'group': groups})
 
 def get_week_number(date_str):
@@ -191,7 +191,7 @@ def createTeam():
 
 @app.route('/team_page')
 def teamPage():
-   return render_template('team_page.html')
+    return render_template('team_page.html')
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
@@ -201,9 +201,7 @@ def getDate():
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
     teams = list(db.team.find({}, {'_id': False}))
-    print(list(db.team.find({}, {'_id': False})))
     sorted_teams = sorted(teams, key=lambda x: (x['week'], x['number']))
-    print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
 
 @app.route('/api/getTarget', methods=['GET'])
@@ -241,8 +239,8 @@ def target_list():
     _id = request.args.get('_id')
     member_name = db.user.find_one({"id":_id}, {"name":1, "_id":0})
     member_name = member_name['name']
+
     date = request.args.get('date')
-    team = {"team_member": ['minkyu', 'chanu'], "start_date": "2023-10-"+date, "number": 3}
 
     data = list(db.target.find({"target_date": "2023-10-"+date}, {"_id":1, "member_id":1, "text":1, "state":1}))
     result = {}
@@ -255,11 +253,14 @@ def target_list():
         else:
             item['state'] = ""
         text_state = [item['text'], item['state'], item['_id']]
-        if not result.get(item['member_id']):
-            result[item['member_id']] = []
-            result[item['member_id']].append(text_state)
+        user_name = db.user.find_one({"id":item['member_id']})
+        user_name = user_name['name']
+        if not result.get(user_name):
+            result[user_name] = []
+            result[user_name].append(text_state)
         else:
-            result[item['member_id']].append(text_state)
+            result[user_name].append(text_state)
+
     print(result)
 
     if cnt == 0:
@@ -272,7 +273,7 @@ def target_list():
 
     date_obj = datetime.strptime(datetime_str, date_format)
 
-    return render_template('target_list.html',result=result, percentage = percentage, now = datetime.now(), current = date_obj, member_id=_id, target_date="2023-10-"+date, _id = member_name, date = date)
+    return render_template('target_list.html',result=result, percentage = f"{percentage:.2f}", now = datetime.now(), current = date_obj, member_id=_id, target_date="2023-10-"+date, _id = member_name, date = date)
 
 @app.route('/api/check', methods=['POST'])
 def is_checked():
