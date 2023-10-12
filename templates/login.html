@@ -42,8 +42,7 @@
                         <div class="flex items-center justify-between">
                             <p id="validation" class="text-left text-red-500 italic text-sm"></p>
                             <div class="text-sm">
-                                <a href="{{ url_for('forgot_pwd') }}">Forgot
-                                    password?</a>
+                                <a href="{{ url_for('forgot_pwd') }}">ID/비밀번호 찾기</a>
                             </div>
                         </div>
                     </div>
@@ -53,13 +52,13 @@
                         <button type="button"
                             class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                             onclick="login()">
-                            Login</button>
+                            로그인</button>
 
                         <!-- 회원가입 Modal toggle -->
                         <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal"
                             class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                             type="button">
-                            Sign Up
+                            회원가입
                         </button>
                         <!-- 회원가입 Main modal -->
                         <div id="authentication-modal" tabindex="-1" aria-hidden="true"

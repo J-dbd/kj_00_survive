@@ -26,7 +26,7 @@ db = client.jungle
 def get_week_number(date_str):
     try:
         # 날짜 문자열을 datetime 객체로 변환
-        date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
+        date = datetime.strptime(date_str, '%Y-%m-%d')
 
         # 날짜로부터 해당 주차 계산
         week_number = date.isocalendar()[1]
