@@ -30,7 +30,7 @@
                         중 입니다.
                     </div>
                     <div class="flex justify-end m-2 text-xl font-semibold">
-                        <button class="w-[195px] h-[40px] bg-green-700 p-1">개인 목표 작성/수정</button>
+                        <button onclick="window.location.href=`{{ url_for('login') }}`" class="w-[195px] h-[40px] bg-green-700 p-1 text-white">로그아웃</button>
                     </div>
                 </div>
             </div>
@@ -62,13 +62,13 @@
                                     <h2 class="ml-2 text-xl font-bold leading-none">September, 2023</h2>
                                 </div>
                                 <div class="grid grid-cols-7 mt-4">
-                                    <div class="pl-1 text-sm">Sun</div>
+                                    <div class="pl-1 text-sm text-red-700">Sun</div>
                                     <div class="pl-1 text-sm">Mon</div>
                                     <div class="pl-1 text-sm">Tue</div>
                                     <div class="pl-1 text-sm">Wed</div>
                                     <div class="pl-1 text-sm">Thu</div>
                                     <div class="pl-1 text-sm">Fri</div>
-                                    <div class="pl-1 text-sm">Sat</div>
+                                    <div class="pl-1 text-sm text-blue-700">Sat</div>
                                 </div>
                                 <div id="calendar_date"
                                     class="grid flex-grow w-full h-auto grid-cols-7 grid-rows-5 gap-px pt-px mt-1 bg-gray-200">
