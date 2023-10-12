@@ -16,10 +16,7 @@ from flask_jwt_extended import (
 
 app = Flask(__name__)
 
-load_dotenv()
-app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
-MONGO_DB=os.getenv('MONGO_DB')
-client = MongoClient(MONGO_DB, 27017)
+client = MongoClient('mongodb://minkyu:jungle@52.78.30.81',27017)
 
 db = client.jungle
 
@@ -30,17 +27,9 @@ def get_week_number(date_str):
 
         # 날짜로부터 해당 주차 계산
         week_number = date.isocalendar()[1]
-
         return week_number
     except ValueError:
         return "날짜 형식이 잘못되었습니다."
-
-
-@app.route('/api/list', methods=['GET'])
-def getGroup():
-   groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
-   print(groups)
-   return jsonify({'result': 'success', 'group': groups})
 
 #####################
 #회원가입과 환영페이지 #
@@ -191,7 +180,6 @@ def getTeamNum():
    #db.team.insert_one({'end_date':'2023-11-11','number':11,'start_date':'2023-11-18','team_member':['ee1122','kyumin','ee112233'],'week':2})
    return
 
-
 @app.route('/')
 def home():
    return render_template('team_page.html')
@@ -216,15 +204,14 @@ def teamPage():
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
+    print("called")
     target_team = list(db.target_team.find({}, {'_id': False}))
     return jsonify({'result': 'success', 'target_team': target_team})
 
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
     teams = list(db.team.find({}, {'_id': False}))
-    print(list(db.team.find({}, {'_id': False})))
     sorted_teams = sorted(teams, key=lambda x: (x['week'], x['number']))
-    print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
 
 @app.route('/api/getTarget', methods=['GET'])
@@ -252,10 +239,76 @@ def postTeam():
 
     week = present_week_number - start_week_number
 
-    # week 계산 함수 작성 필요
     insert_dict = {"number": int(received_number), "start_date": translated_start_data, "end_date": translated_end_data, "team_member": {}, "week": week}
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})
+
+@app.route('/api/postCheckboxStatus', methods=['POST'])
+def postCheckboxStatus():
+    received_arr = request.form['checkbox_status']
+    received_start_to_end_date = request.form['start_to_end_date']
+    received_team_number = request.form['team_number']
+
+    date_list = received_start_to_end_date.split('~')
+    start_date = date_list[0].rstrip()
+    end_date = date_list[-1].lstrip()
+
+    query = {
+       'start_date': start_date,
+       'end_date': end_date,
+       'team_number': int(received_team_number)
+    }
+
+    result_list = list(db.target_team.find(query))
+
+    if (len(result_list) != 0):
+        result = result_list[0]['_id']
+    else:
+       return jsonify({'result': 'fail'})
+    
+    sliced_arr = received_arr[1:-1]
+    splited_arr = received_arr.split(",")
+    for i in range(len(splited_arr)):
+        if i == 0:
+          splited_arr[i] = splited_arr[i][1:]
+        elif i == len(splited_arr)-1:
+          splited_arr[i] = splited_arr[i][:1]
+    int_arr = [int(i) for i in splited_arr]
+    db.target_team.update_one(
+      {"_id": ObjectId(result)}, 
+       {"$set": {"state": int_arr}}
+    )
+    return jsonify({'result': 'success'})
+
+@app.route('/api/postNewTeamGoal', methods=['POST'])
+def postNewTeamGoal():
+    received_start_to_end_date = request.form['start_to_end_date']
+    received_team_number = request.form['team_number']
+    received_new_team_goal = request.form['text']
+
+    date_list = received_start_to_end_date.split('~')
+    start_date = date_list[0].rstrip()
+    end_date = date_list[-1].lstrip()
+
+    query = {
+       'start_date': start_date,
+       'end_date': end_date,
+       'team_number': int(received_team_number)
+    }
+
+    result_list = list(db.target_team.find(query))
+
+    if (len(result_list) != 0):
+        result = result_list[0]['_id']
+    else:
+       return jsonify({'result': 'fail'})
+
+    db.target_team.update_one(
+       {"_id": ObjectId(result)}, 
+       {"$push": {"text": received_new_team_goal, "state": 0}}
+    )
+    return jsonify({'result': 'success'})
+
 
 @app.route('/target_list')
 def target_list():
