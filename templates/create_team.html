@@ -79,24 +79,23 @@
       </div>
     </div>
 </body>
+<script src="{{url_for('static', filename='index.js')}}"></script>
 <script>
-  $(document).ready(function () { });
   function postTeam(name, start_date, end_date) {
     $.ajax({
-      type: "POST",
-      url: "api/postTeam",
-      data: {
-        'name_give': name,
-        'start_date_give': start_date,
-        'end_date_give': end_date
-      },
-      success: function (response) {
-        if (response['result'] == 'success') {
-          alert('POST updated!')
+        type: "POST",
+        url: "api/postTeam",
+        data: {
+            'name_give': name,
+            'start_date_give': start_date,
+            'end_date_give': end_date
+        },
+        success: function (response) {
+            if (response['result'] == 'success') {
+                alert('POST updated!')
+            }
         }
-      }
     })
-  }
+}
 </script>
-
 </html>

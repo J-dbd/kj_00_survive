@@ -142,3 +142,16 @@ function initProjectTerm(start_date, end_date){
     var temp_html = `${start_date} ~ ${end_date}`;
     $('#start_to_end_date').append(temp_html);
 }
+
+function initGroup(week) {
+    let tempHtml = `<select id="week${week}_team" onchange="location.href='team_page'" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-6">
+                        <option selected>정글 3기 ${week}주차</option>`;
+    $('#group_by_week').append(tempHtml)
+}
+
+function initTeam(week, team_name_arr) {
+    for (let i = 0; i < team_name_arr.length; i++) {
+        let tempHtml = `<option value="${team_name_arr[i]}">${team_name_arr[i]}</option>`
+        $(`#week${week}_team`).append(tempHtml)
+    }
+}
