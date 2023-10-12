@@ -83,19 +83,67 @@
 <script>
   function postTeam(number, start_date, end_date) {
     $.ajax({
-        type: "POST",
-        url: "api/postTeam",
-        data: {
-            'number_give': number,
-            'start_date_give': start_date,
-            'end_date_give': end_date
-        },
-        success: function (response) {
-            if (response['result'] == 'success') {
-                alert('POST updated!')
-            }
+      type: "POST",
+      url: "api/postTeam",
+      data: {
+        'number_give': number,
+        'start_date_give': start_date,
+        'end_date_give': end_date
+      },
+      success: function (response) {
+        if (response['result'] == 'success') {
+          alert('POST updated!')
         }
+      }
     })
-}
+
+    $(document).ready(function () {
+
+      let id = ''
+      let name = ''
+      getDate();
+      getTarget();
+      //get token
+      let data = localStorage.getItem('token') || ''
+      if (data !== '') {
+        token_data = { 'token': data }
+        $.ajax({
+          url: '/validator',
+          type: "GET",
+          data: {},
+          headers: { "Authorization": 'Bearer ' + data },
+          error: function (request, status, error) {
+            console.log("code: " + request.status)
+            console.log("message: " + request.responseText)
+            console.log("error: " + error);
+          },
+          success: function (res) {
+            //토큰 유효성 검사
+            if (res['result'] == 'fail') {
+              //console.log(res)
+              window.location.href = '{{ url_for("pop") }}'
+            };
+            if (res['result'] == 'success') {
+              data = res['data']
+              //console.log(data)
+              id = data['id']
+              name = data['name']
+            }
+          }
+
+        })
+      }
+      //if token doesn't exist
+      else if (data == '') {
+        window.location.href = '{{ url_for("pop") }}'
+      }
+
+      setTimeout(() => {
+        $("#main").addClass("show")
+      }, 800)
+      //console.log('id/name', id, name)
+    })
+  }
 </script>
+
 </html>

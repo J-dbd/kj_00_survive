@@ -1,59 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>일별 개인 목표</title>
 </head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js"></script>
+
 <body class="bg-gray-50">
-<div class="flex flex-col h-screen justify-between">
-    <header>
-    <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl py-4">
-        <span class="self-center text-3xl font-semibold whitespace-nowrap text-black"><font class="text-green-700">크래프톤</font> 정글 3기</span>
-        <div>
-            <div class="font-semibold text-xl">
-                정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존 중 입니다.
-            </div>
-            <div class="flex justify-between m-2 text-xl font-semibold">
-                <button class="w-[195px] h-[40px] bg-green-700 p-1">캘린더 보기</button>
-                <button class="w-[195px] h-[40px] bg-green-700 p-1">개인 목표 작성/수정</button>
-            </div>
-        </div>
-    </div>
-</header>
-    <div class="flex justify-center items-center">
-    <div class="relative bg-white m-10 px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 rounded">
-    <div class="text-center text-3xl font-semibold">
-        ??월??일
-    </div>
-    <div class="flex">
-        <div class="flex m-4">
-            <div class="bg-green-200">
-                <div class="text-center text-3xl font-semibold">
+    <div class="flex flex-col h-screen justify-between">
+        <header>
+            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl py-4">
+                <span class="self-center text-3xl font-semibold whitespace-nowrap text-black">
+                    <font class="text-green-700">크래프톤</font> 정글 3기
+                </span>
+                <div>
+                    <div class="font-semibold text-xl">
+                        정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
+                        중 입니다.
+                    </div>
+                    <div class="flex justify-between m-2 text-xl font-semibold">
+                        <button class="w-[195px] h-[40px] bg-green-700 p-1">캘린더 보기</button>
+                        <button class="w-[195px] h-[40px] bg-green-700 p-1">개인 목표 작성/수정</button>
+                    </div>
                 </div>
-                <div class="m-2 p-2">
-                    <div class="flex justify-between items-center">
-                    <span></span>
-                    <input type="checkbox" class="mx-2 w-[16px] h-[16px]">
+            </div>
+        </header>
+        <div class="flex justify-center items-center">
+            <div class="relative bg-white m-10 px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 rounded">
+                <div class="text-center text-3xl font-semibold">
+                    ??월??일
+                </div>
+                <div class="flex">
+                    <div class="flex m-4">
+                        <div class="bg-green-200">
+                            <div class="text-center text-3xl font-semibold">
+                            </div>
+                            <div class="m-2 p-2">
+                                <div class="flex justify-between items-center">
+                                    <span></span>
+                                    <input type="checkbox" class="mx-2 w-[16px] h-[16px]">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <footer class="flex flex-wrap justify-between bg-gray-50 p-4">
+            <div class="w-full h-6 bg-gray-200 rounded-full dark:bg-gray-700">
+                <div class="h-6 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 45%"></div>
+            </div>
+            <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black"
+                onclick="window.location.href=`{{ url_for('selectTeam') }}` ">
+                부족에서 나가기
+            </span>
+        </footer>
     </div>
-</div>
-    </div>
-    <footer class="flex flex-wrap justify-between bg-gray-50 p-4">
-<div class="w-full h-6 bg-gray-200 rounded-full dark:bg-gray-700">
-  <div class="h-6 bg-blue-600 rounded-full dark:bg-blue-500" style="width: 45%"></div>
-</div>
-        <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black" onclick="window.location.href=`{{ url_for('selectTeam') }}` ">
-            부족에서 나가기
-        </span>
-    </footer>
-</div>
 </body>
-<script src="{{url_for('static', filename='index.js')}}"></script>
+<script>
+    $(document).ready(function () {
+
+        let id = ''
+        let name = ''
+        getDate();
+        getTarget();
+        //get token
+        let data = localStorage.getItem('token') || ''
+        if (data !== '') {
+            token_data = { 'token': data }
+            $.ajax({
+                url: '/validator',
+                type: "GET",
+                data: {},
+                headers: { "Authorization": 'Bearer ' + data },
+                error: function (request, status, error) {
+                    console.log("code: " + request.status)
+                    console.log("message: " + request.responseText)
+                    console.log("error: " + error);
+                },
+                success: function (res) {
+                    //토큰 유효성 검사
+                    if (res['result'] == 'fail') {
+                        //console.log(res)
+                        window.location.href = '{{ url_for("pop") }}'
+                    };
+                    if (res['result'] == 'success') {
+                        data = res['data']
+                        //console.log(data)
+                        id = data['id']
+                        name = data['name']
+
+                    }
+                }
+
+            })
+        }
+        //if token doesn't exist
+        else if (data == '') {
+            window.location.href = '{{ url_for("pop") }}'
+        }
+
+        setTimeout(() => {
+            $("#main").addClass("show")
+        }, 800)
+        //console.log('id/name', id, name)
+    })
+</script>
+
 </html>

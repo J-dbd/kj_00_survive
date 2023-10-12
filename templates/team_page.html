@@ -195,6 +195,9 @@
         window.location.href = '{{ url_for("login") }}'
     }
 
+    console.log("ddd", localStorage.getItem("team_num"))
+    console.log("ddd", localStorage.getItem("week"))
+
 
     function addTeamGoal() {
         var new_team_goal = document.getElementById('new_team_goal').value;

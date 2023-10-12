@@ -146,6 +146,7 @@
       'id': id,
       'name': name,
       'team': selectedValue,
+      'week': week,
     }
     $.ajax({
       url: '/team_page',
@@ -160,7 +161,9 @@
         console.log("post suceess", selectedValue)
 
         localStorage.setItem("team_num", selectedValue)
-        //console.log("ddd", localStorage.getItem("team_num"))
+        localStorage.setItem("week", week)
+        console.log("ddd", localStorage.getItem("team_num"))
+        console.log("ddd", localStorage.getItem("week"))
         window.location.href = "{{ url_for('teamPage') }}"
       }
     })
