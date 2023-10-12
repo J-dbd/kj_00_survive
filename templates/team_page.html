@@ -189,6 +189,12 @@
             window.location.href = '{{ url_for("pop") }}'
         }
 
+  function addTeamGoal(){
+    var new_team_goal = document.getElementById('new_team_goal').value;
+    var start_to_end_date = document.getElementById('start_to_end_date').innerHTML;
+    initNewTeamGoal(new_team_goal);
+    postNewTeamGoal(start_to_end_date, 3, new_team_goal);
+  }
         setTimeout(() => {
             $("#main").addClass("show")
         }, 800)
@@ -218,17 +224,7 @@
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email address</label>
                         <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="john.doe@company.com" required>
                     </div>`
-    }
-
-    function addHeaderUserName(userName) {
-        var temp_html = `
-        <div class="font-semibold text-xl">
-            정글 3기 <font class="text-green-700">${userName}</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
-            중 입니다.
-        </div>
-        `
-        $('#header_username').append(temp_html)
-    }
+  }
 </script>
 
 </html>

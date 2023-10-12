@@ -28,12 +28,6 @@ def get_week_number(date_str):
         # 날짜 문자열을 datetime 객체로 변환
         date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
 
-        # 날짜로부터 해당 주차 계산
-        week_number = date.isocalendar()[1]
-
-        return week_number
-    except ValueError:
-        return "날짜 형식이 잘못되었습니다."
 
 
 @app.route('/api/list', methods=['GET'])
@@ -41,6 +35,16 @@ def getGroup():
    groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
    print(groups)
    return jsonify({'result': 'success', 'group': groups})
+  
+          # 날짜로부터 해당 주차 계산
+        #week_number = date.isocalendar()[1]
+
+
+        #return week_number
+    #except ValueError:
+        #return "날짜 형식이 잘못되었습니다."
+
+
 
 #####################
 #회원가입과 환영페이지 #
@@ -191,7 +195,6 @@ def getTeamNum():
    #db.team.insert_one({'end_date':'2023-11-11','number':11,'start_date':'2023-11-18','team_member':['ee1122','kyumin','ee112233'],'week':2})
    return
 
-
 @app.route('/')
 def home():
    return render_template('team_page.html')
@@ -216,15 +219,14 @@ def teamPage():
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
+    print("called")
     target_team = list(db.target_team.find({}, {'_id': False}))
     return jsonify({'result': 'success', 'target_team': target_team})
 
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
     teams = list(db.team.find({}, {'_id': False}))
-    print(list(db.team.find({}, {'_id': False})))
     sorted_teams = sorted(teams, key=lambda x: (x['week'], x['number']))
-    print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
 
 @app.route('/api/getTarget', methods=['GET'])
@@ -252,7 +254,6 @@ def postTeam():
 
     week = present_week_number - start_week_number
 
-    # week 계산 함수 작성 필요
     insert_dict = {"number": int(received_number), "start_date": translated_start_data, "end_date": translated_end_data, "team_member": {}, "week": week}
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})
