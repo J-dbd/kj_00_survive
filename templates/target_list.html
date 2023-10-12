@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>일별 개인 목표</title>
+    <title>일일 개인 목표</title>
 </head>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
@@ -16,7 +16,7 @@
         <span class="self-center text-3xl font-semibold whitespace-nowrap text-black"><font class="text-green-700">크래프톤</font> 정글 3기</span>
         <div>
             <div class="font-semibold text-xl">
-                정글 3기 <font class="text-green-700">{{_id}}</font>님 정글에서 <font id="countdown" class="text-green-700"></font>시간 생존 중 입니다.
+                정글 3기 <font class="text-green-700">{{_id}}</font>님 정글에서 <font id="time-spent" class="text-green-700"></font>생존 중 입니다.
             </div>
             <div class="flex justify-between m-2 text-xl font-semibold">
                 <button class="w-[195px] h-[40px] bg-green-700 p-1" onclick="window.location.href=`{{url_for('teamPage')}}`">캘린더 보기</button>
@@ -99,5 +99,24 @@
 </body>
 <script src="{{url_for('static', filename='index.js')}}"></script>
 <script>
+    $(document).ready(function() {
+            var targetDate = new Date('2023-10-10T00:00:00Z');
+
+            function updateTimeSpent() {
+                var currentDate = new Date();
+                var timeDifference = currentDate - targetDate;
+
+                var days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+                $('#time-spent').html(days + '일 ' + hours + '시간 ' + minutes + '분 ' + seconds + '초 ');
+            }
+
+            updateTimeSpent();
+
+            setInterval(updateTimeSpent, 1000);
+        });
 </script>
 </html>
