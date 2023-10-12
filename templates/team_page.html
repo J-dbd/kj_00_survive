@@ -250,6 +250,31 @@
         `
         $('#header_username').append(temp_html)
     }
+    function postCheckboxArray() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const checkbox_count = checkboxes.length;
+        console.log(checkbox_count)
+
+        const checkbox_array = new Array(checkbox_count).fill(0);
+        for (let i = 0; i < checkbox_count; i++) {
+            const checkbox = document.getElementById(`checkbox${i}`);
+            checkbox_array[i] = checkbox.checked ? 1 : 0;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "api/postCheckboxStatus",
+            traditional: true,
+            data: {
+                'checkbox_status': JSON.stringify(checkbox_array),
+                'start_to_end_date': document.getElementById('start_to_end_date').innerHTML,
+                'team_number': 3
+            },
+            success: function (response) {
+                location.reload();
+            }
+        });
+    }
 </script>
 
 </html>
