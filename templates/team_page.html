@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>team_page</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js"></script>
+
+    <style>
+        .group:hover .group-hover\:flex {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <div class="flex flex-col h-screen justify-between">
+        <header>
+            <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl py-4">
+                <span class="self-center text-3xl font-semibold whitespace-nowrap text-black">
+                    <font class="text-green-700">크래프톤</font> 정글 3기
+                </span>
+                <div>
+                    <div class="font-semibold text-xl">
+                        정글 3기 <font class="text-green-700">???</font>님 정글에서 <font class="text-green-700">??</font>시간 생존
+                        중 입니다.
+                    </div>
+                    <div class="flex justify-end m-2 text-xl font-semibold">
+                        <button class="w-[195px] h-[40px] bg-green-700 p-1">개인 목표 작성/수정</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="flex justify-center items-center mb-8">
+            <div class="flex flex-row">
+                <div class="basis-1/5 bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4">
+                    <p id="start_to_end_date"
+                        class="flex justify-center text-1xl font-semibold whitespace-nowrap text-black my-6">start_date ~
+                        end_date</p>
+                    <p class="flex justify-center text-3xl font-semibold whitespace-nowrap text-black mb-6">
+                        <font class="text-green-700">부족</font>&nbsp;목표
+                    </p>
+                    <hr class="mb-6">
+                    <div id="team_goal_board" class="relative">
+                        <input type="text" id="disabled_outlined"
+                            class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer my-2"
+                            placeholder=" " disabled />
+                        <label for="disabled_outlined"
+                            class="absolute text-sm text-black dark:text-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">team_goal_1</label>
+                    </div>
+                </div>
+                <div
+                    class="basis-4/5  bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4 max-w-[80%]">
+                    <div class="text-gray-700">
+                        <div class="flex flex-grow overflow-auto my-10">
+                            <div class="flex flex-col flex-grow">
+                                <div class="flex items-center mt-4">
+                                    <h2 class="ml-2 text-xl font-bold leading-none">September, 2023</h2>
+                                </div>
+                                <div class="grid grid-cols-7 mt-4">
+                                    <div class="pl-1 text-sm">Sun</div>
+                                    <div class="pl-1 text-sm">Mon</div>
+                                    <div class="pl-1 text-sm">Tue</div>
+                                    <div class="pl-1 text-sm">Wed</div>
+                                    <div class="pl-1 text-sm">Thu</div>
+                                    <div class="pl-1 text-sm">Fri</div>
+                                    <div class="pl-1 text-sm">Sat</div>
+                                </div>
+                                <div id="calendar_date"
+                                    class="grid flex-grow w-full h-auto grid-cols-7 grid-rows-5 gap-px pt-px mt-1 bg-gray-200">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="flex flex-wrap justify-between bg-gray-500 p-4">
+            <div class="w-[1000px] h-6 bg-gray-200 rounded-full">
+                <div class="h-6 bg-green-700 rounded-full" style="width: {{percentage}}%"></div>
+            </div>
+            <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black"
+                onclick="window.location.href=`{{ url_for('selectTeam') }}`">
+                부족에서 나가기
+            </span>
+        </footer>
+    </div>
+</body>
+<script src="{{url_for('static', filename='index.js')}}"></script>
+<script>
+    $(document).ready(function () {
+        getDate();
+        getTarget();
+  });
+</script>
+</html>
