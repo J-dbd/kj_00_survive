@@ -122,6 +122,31 @@ function initTeamGoal(team_goal){
     })
 }
 
+function initNewTeamGoal(new_team_goal){
+    let temp_html = `<div class="relative flex items-center mb-4 z-0">
+                    <input type="text" id="disabled_standard" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " disabled />
+                    <label for="disabled_standard" class="absolute text-sm text-black dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">${new_team_goal}</label>
+                    <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                </div>`;
+    $(`#team_goal_board`).append(temp_html);
+}
+
+function postNewTeamGoal(start_date, end_date, team_number, new_team_goal){
+    $.ajax({
+        type:"POST",
+        url: "api/postNewTeamGoal",
+        data: {
+            'start_date': start_date,
+            'end_date' : end_date,
+            'team_number': team_number,
+            'text': new_team_goal
+        },
+        success: function(response){
+            location.reload();
+        }
+    });
+}
+
 function initMember(date, member_id_set){
     $(`#${date}`).empty();
     const member_id_arr = [...member_id_set];
