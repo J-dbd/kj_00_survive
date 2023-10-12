@@ -35,28 +35,24 @@
                 </div>
             </div>
         </header>
-        <div class="flex justify-center items-center">
+        <div class="flex justify-center items-center mb-8">
             <div class="flex flex-row">
                 <div class="basis-1/5 bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4">
-                    <p id="start_to_end_date" class="flex justify-center text-1xl font-semibold whitespace-nowrap text-black my-6">start_date ~ end_date</p>
-                    <p class="flex justify-center text-3xl font-semibold whitespace-nowrap text-black mb-6"><font class="text-green-700">부족</font>&nbsp;목표</p>
+                    <p id="start_to_end_date"
+                        class="flex justify-center text-1xl font-semibold whitespace-nowrap text-black my-6">start_date ~
+                        end_date</p>
+                    <p class="flex justify-center text-3xl font-semibold whitespace-nowrap text-black mb-6">
+                        <font class="text-green-700">부족</font>&nbsp;목표
+                    </p>
                     <hr class="mb-6">
-                    <div class="relative">
+                    <div id="team_goal_board" class="relative">
                         <input type="text" id="disabled_outlined"
                             class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer my-2"
                             placeholder=" " disabled />
                         <label for="disabled_outlined"
                             class="absolute text-sm text-black dark:text-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">team_goal_1</label>
                     </div>
-                    <div class="relative">
-                        <input type="text" id="disabled_outlined"
-                            class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer my-2"
-                            placeholder=" " disabled />
-                        <label for="disabled_outlined"
-                            class="absolute text-sm text-black dark:text-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">team_goal_2</label>
-                    </div>
                 </div>
-
                 <div
                     class="basis-4/5  bg-white shadow-xl ring-1 ring-gray-900/5 sm:rounded-lg sm:px-10 mx-4 max-w-[80%]">
                     <div class="text-gray-700">
@@ -110,7 +106,9 @@
             let received_target_team_data = response['target_team'];
             let start_date = received_target_team_data[0]['start_date'];
             let end_date = received_target_team_data[0]['end_date'];
+            let team_goal = received_target_team_data[0]['text'];
             initProjectTerm(start_date, end_date);
+            initTeamGoal(team_goal);
         }
     })
   }
@@ -127,7 +125,6 @@
             var before_date = target_data[0]['target_date'];
             const date_string_arr = Array.from({ length: 30 }, (_, index) => (index + 1).toString().padStart(2, '0'));
 
-
             for(let j=0; j<date_string_arr.length; j++){
                 initDate(date_string_arr[j]);
             }
@@ -138,7 +135,7 @@
                 let target_date = target['target_date'];
                 if (target_date != before_date) {
                     let date = before_date.substr(-2);
-                    initMember(date, member_id_arr);
+                    initMember(date, member_id_set);
                     member_id_set = new Set();
                 }
 
@@ -168,6 +165,18 @@
                                         </div>
                                     </div>`
     $('#calendar_date').append(temp_html);
+  }
+
+  function initTeamGoal(team_goal){
+    $(`#team_goal_board`).empty();
+    team_goal.forEach(function(goal){
+        let temp_html = `<div class="relative flex items-center mb-4 z-0">
+                                <input type="text" id="disabled_standard" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " disabled />
+                                <label for="disabled_standard" class="absolute text-sm text-black dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">${goal}</label>
+                                <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        </div>`;
+        $(`#team_goal_board`).append(temp_html);
+    })
   }
 
   function initMember(date, member_id_set){
