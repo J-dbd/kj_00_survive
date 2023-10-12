@@ -55,11 +55,11 @@
     </div>
     <div class="flex">
         {% for user_name, user_text in result.items() %}
-        <div class="flex m-4">
-            <div class="bg-green-200">
-                <div class="text-center text-3xl font-semibold">
-                    {{user_name}}
-                </div>
+        <div class="m-4">
+            <div class="text-center text-3xl font-semibold">
+                {{user_name}}
+            </div>
+            <div class="bg-gray-300">
                 {% for item in user_text %}
                 <div class="m-2 p-2">
                     <div class="flex justify-between items-center">
