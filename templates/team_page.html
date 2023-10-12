@@ -132,7 +132,7 @@
                 <div class="h-6 bg-green-700 rounded-full" style="width: {{percentage}}%"></div>
             </div>
             <span class="self-center cursor-pointer text-3xl font-semibold whitespace-nowrap text-black"
-                onclick="window.location.href=`{{ url_for('selectTeam') }}`">
+                onclick="outTeam()">
                 부족에서 나가기
             </span>
         </footer>
@@ -140,7 +140,11 @@
 </body>
 <script src="{{url_for('static', filename='index.js')}}"></script>
 <script>
-
+    function outTeam() {
+        localStorage.removeItem('team_num')
+        localStorage.removeItem('week')
+        window.location.href = `{{ url_for('selectTeam') }}`
+    }
 
     $(document).ready(function () {
 
@@ -191,6 +195,8 @@
     })
     //header
     function logout() {
+        localStorage.removeItem('team_num')
+        localStorage.removeItem('week')
         localStorage.removeItem('token')
         window.location.href = '{{ url_for("login") }}'
     }
