@@ -56,7 +56,7 @@ function getDate(){
     })
 }
 
-function getTarget(){
+function getTarget(_id){
     $('#calendar_date').empty()
     $.ajax({
         type: "GET",
@@ -69,7 +69,7 @@ function getTarget(){
             const date_string_arr = Array.from({ length: 30 }, (_, index) => (index + 1).toString().padStart(2, '0'));
 
             for(let j=0; j<date_string_arr.length; j++){
-                initDate(date_string_arr[j]);
+                initDate(date_string_arr[j], _id);
             }
 
             for(let i=0; i<target_data.length; i++){
@@ -94,10 +94,11 @@ function getTarget(){
     })
 }
 
-function initDate(date){
+function initDate(date, _id){
+
     let temp_html = `<div class="relative flex flex-col bg-white group">
                                         <span class="mx-2 my-1 text-xs font-bold">${date}</span>
-                                        <div class="flex flex-col px-4 py-6">
+                                        <div class="flex flex-col px-4 py-6" onclick="window.location.href='../target_list?_id=${_id}&date=${date}'">
                                             <button 
                                                 class="flex items-center flex-shrink-0 h-5 px-1 py-6 text-xs hover:bg-gray-200">
                                                 <div>
