@@ -183,15 +183,14 @@ def teamPage():
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
+    print("called")
     target_team = list(db.target_team.find({}, {'_id': False}))
     return jsonify({'result': 'success', 'target_team': target_team})
 
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
     teams = list(db.team.find({}, {'_id': False}))
-    print(list(db.team.find({}, {'_id': False})))
     sorted_teams = sorted(teams, key=lambda x: (x['week'], x['number']))
-    print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
 
 @app.route('/api/getTarget', methods=['GET'])
@@ -223,6 +222,43 @@ def postTeam():
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})
 
+@app.route('/api/postCheckboxStatus', methods=['POST'])
+def postCheckboxStatus():
+    received_arr = request.form['checkbox_status']
+    received_start_to_end_date = request.form['start_to_end_date']
+    received_team_number = request.form['team_number']
+
+    date_list = received_start_to_end_date.split('~')
+    start_date = date_list[0].rstrip()
+    end_date = date_list[-1].lstrip()
+
+    query = {
+       'start_date': start_date,
+       'end_date': end_date,
+       'team_number': int(received_team_number)
+    }
+
+    result_list = list(db.target_team.find(query))
+
+    if (len(result_list) != 0):
+        result = result_list[0]['_id']
+    else:
+       return jsonify({'result': 'fail'})
+    
+    sliced_arr = received_arr[1:-1]
+    splited_arr = received_arr.split(",")
+    for i in range(len(splited_arr)):
+        if i == 0:
+          splited_arr[i] = splited_arr[i][1:]
+        elif i == len(splited_arr)-1:
+          splited_arr[i] = splited_arr[i][:1]
+    int_arr = [int(i) for i in splited_arr]
+    db.target_team.update_one(
+      {"_id": ObjectId(result)}, 
+       {"$set": {"state": int_arr}}
+    )
+    return jsonify({'result': 'success'})
+
 @app.route('/api/postNewTeamGoal', methods=['POST'])
 def postNewTeamGoal():
     received_start_to_end_date = request.form['start_to_end_date']
@@ -240,6 +276,7 @@ def postNewTeamGoal():
     }
 
     result_list = list(db.target_team.find(query))
+
     if (len(result_list) != 0):
         result = result_list[0]['_id']
     else:
@@ -247,7 +284,7 @@ def postNewTeamGoal():
 
     db.target_team.update_one(
        {"_id": ObjectId(result)}, 
-       {"$push": {"text": received_new_team_goal}}
+       {"$push": {"text": received_new_team_goal, "state": 0}}
     )
     return jsonify({'result': 'success'})
 
