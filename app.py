@@ -9,9 +9,17 @@ import os
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token, get_jwt_identity, unset_jwt_cookies, create_refresh_token,get_jwt
+)
+
+
 app = Flask(__name__)
 
-client = MongoClient('mongodb://minkyu:jungle@52.78.30.81', 27017)
+load_dotenv()
+app.config['SECRET_KEY']=os.getenv('SECRET_KEY')
+MONGO_DB=os.getenv('MONGO_DB')
+client = MongoClient(MONGO_DB, 27017)
 
 db = client.jungle
 
@@ -20,12 +28,21 @@ def get_week_number(date_str):
         # 날짜 문자열을 datetime 객체로 변환
         date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
 
-        # 날짜로부터 해당 주차 계산
-        week_number = date.isocalendar()[1]
 
-        return week_number
-    except ValueError:
-        return "날짜 형식이 잘못되었습니다."
+
+@app.route('/api/list', methods=['GET'])
+def getGroup():
+   groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
+   print(groups)
+   return jsonify({'result': 'success', 'group': groups})
+  
+          # 날짜로부터 해당 주차 계산
+        #week_number = date.isocalendar()[1]
+
+
+        #return week_number
+    #except ValueError:
+        #return "날짜 형식이 잘못되었습니다."
 
 
 
@@ -59,7 +76,7 @@ def pop():
 #############
 # JWT Token #
 #############
-
+jwt=JWTManager(app)
 #로그인, jwt 토큰 발급
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -69,16 +86,14 @@ def login():
       isUser=db['user'].find_one({'id':id})
       if isUser and isUser['password']==pw:#create jwt token
          name=isUser['name']
-         payload={"user":id,
-                  "name":name,
-            "exp":datetime.utcnow()+timedelta(seconds=60*60*24)}
-         token=jwt.encode(
-            payload=payload,
-            key=app.config['SECRET_KEY'],
-            algorithm="HS256"
-         )
+         additional_claims={
+            'name':name,
+         }
+         expires_delta=timedelta(seconds=60*60*10)
+         access_token = create_access_token(identity=id,additional_claims=additional_claims,expires_delta=expires_delta)
+         #print("access_token",access_token)
          return jsonify({'result':'success',
-                        'access_token':token})
+                        'access_token':access_token})
       else:
          if isUser==None:
             msg="아이디가 존재하지 않습니다."
@@ -88,22 +103,28 @@ def login():
       
    else:
       return render_template('login.html')
-   
+
 #JWT토큰 검증 API
-@app.route('/validator',methods=['POST'])
-def validator():
-   
-   header_data=request.form['token']
-   print('header_data',header_data)
-   try:
-      data=jwt.decode(header_data,key=app.config['SECRET_KEY'],
-               algorithms="HS256")
-      #토큰이 유효할시 id, name반환
+@app.route("/validator", methods=["GET"])
+@jwt_required(optional=True)
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+   current_identity = get_jwt_identity()
+   if current_identity:
+      data=get_jwt()
+      #print(data)
+      data={'id':data['sub'],'name':data['name']}
       return jsonify({'result':"success",'data':data})
-   except jwt.ExpiredSignatureError:
+   else:
       msg='Signature has expired'
       return jsonify({'result':"fail",'data':msg})
-   
+
+@app.route("/test")
+def test():
+   return render_template("test.html")
+
+
+@app.route('/logout',methods=[])   
 
 ##############
 # ID/PW 찾기 #
@@ -167,8 +188,12 @@ def find_pwd():
 def select_team():
    return render_template('select_team.html')
 
-
-
+@app.route('/api/getTeamNum')
+def getTeamNum():
+   teams = list(db.team.find({}, {'team_member':True,'number':True,'_id': False}))
+   print(teams)
+   #db.team.insert_one({'end_date':'2023-11-11','number':11,'start_date':'2023-11-18','team_member':['ee1122','kyumin','ee112233'],'week':2})
+   return
 
 @app.route('/')
 def home():
@@ -182,21 +207,26 @@ def selectTeam():
 def createTeam():
    return render_template('create_team.html')
 
-@app.route('/team_page')
+@app.route('/team_page',methods=['GET','POST'])
 def teamPage():
+   if request.method=="POST":
+      id=request.form['id']
+      name=request.form['name']
+      team=request.form['team']
+      print("id/name/team",id,name,team)
+      return render_template('team_page.html',id=id,name=name,team=team)
    return render_template('team_page.html')
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
+    print("called")
     target_team = list(db.target_team.find({}, {'_id': False}))
     return jsonify({'result': 'success', 'target_team': target_team})
 
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
     teams = list(db.team.find({}, {'_id': False}))
-    print(list(db.team.find({}, {'_id': False})))
     sorted_teams = sorted(teams, key=lambda x: (x['week'], x['number']))
-    print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
 
 @app.route('/api/getTarget', methods=['GET'])
@@ -224,46 +254,8 @@ def postTeam():
 
     week = present_week_number - start_week_number
 
-    # week 계산 함수 작성 필요
     insert_dict = {"number": int(received_number), "start_date": translated_start_data, "end_date": translated_end_data, "team_member": {}, "week": week}
     db.team.insert_one(insert_dict)
-    return jsonify({'result': 'success'})
-
-@app.route('/api/postCheckboxStatus', methods=['POST'])
-def postCheckboxStatus():
-    received_arr = request.form['checkbox_status']
-    received_start_to_end_date = request.form['start_to_end_date']
-    received_team_number = request.form['team_number']
-
-    date_list = received_start_to_end_date.split('~')
-    start_date = date_list[0].rstrip()
-    end_date = date_list[-1].lstrip()
-
-    query = {
-       'start_date': start_date,
-       'end_date': end_date,
-       'team_number': int(received_team_number)
-    }
-
-    result_list = list(db.target_team.find(query))
-
-    if (len(result_list) != 0):
-        result = result_list[0]['_id']
-    else:
-       return jsonify({'result': 'fail'})
-    
-    sliced_arr = received_arr[1:-1]
-    splited_arr = received_arr.split(",")
-    for i in range(len(splited_arr)):
-        if i == 0:
-          splited_arr[i] = splited_arr[i][1:]
-        elif i == len(splited_arr)-1:
-          splited_arr[i] = splited_arr[i][:1]
-    int_arr = [int(i) for i in splited_arr]
-    db.target_team.update_one(
-      {"_id": ObjectId(result)}, 
-       {"$set": {"state": int_arr}}
-    )
     return jsonify({'result': 'success'})
 
 @app.route('/target_list')

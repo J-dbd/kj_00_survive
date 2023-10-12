@@ -147,13 +147,12 @@ function initNewTeamGoal(new_team_goal){
     $(`#team_goal_board`).append(temp_html);
 }
 
-function postNewTeamGoal(start_date, end_date, team_number, new_team_goal){
+function postNewTeamGoal(start_to_end_date, team_number, new_team_goal){
     $.ajax({
         type:"POST",
         url: "api/postNewTeamGoal",
         data: {
-            'start_date': start_date,
-            'end_date' : end_date,
+            'start_to_end_date': start_to_end_date,
             'team_number': team_number,
             'text': new_team_goal
         },

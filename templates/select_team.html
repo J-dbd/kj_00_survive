@@ -2,88 +2,173 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>select_team</title>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>select_team</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </head>
 
 <body>
-    <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-4 sm:py-12">
-        <div class="relative bg-white px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10">
-                <div class="divide-y divide-gray-300/50">
-                  <div class="space-y-6 py-8 text-base leading-7 text-gray-600">
-                    <p class="flex justify-center text-[22px]">
-                      <span style="color:green">부족(팀)</span>을 선택하세요
-                    </p>
-                  </div>
-                  <div class="overflow-auto pt-8 pb-8">
-                    <div id="group_by_week">
-                    </div>
-                  <div class="pt-8 text-base font-semibold leading-7 flex justify-center">
-                    <button type="button" onclick="window.location.href=`{{ url_for('login') }}`" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">로그아웃</button>
-                    <button type="button" onclick="location.href='create_team'" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">새로 만들기</button>
-                  </div>
+  <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-4 sm:py-12">
+    <div
+      class="relative bg-white px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10">
+      <div class="divide-y divide-gray-300/50">
+        <div class="space-y-6 py-8 text-base leading-7 text-gray-600">
+          <p class="flex justify-center text-[22px]">
+            <span style="color:green">부족(팀)</span>을 선택하세요
+          </p>
         </div>
-    </div>
+        <div class="overflow-auto pt-8 pb-8">
+          <div id="group_by_week">
+          </div>
+          <div class="pt-8 text-base font-semibold leading-7 flex justify-center">
+            <button type="button" onclick="window.location.href=`{{ url_for('login') }}`"
+              class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">로그아웃</button>
+            <button type="button" onclick="location.href='create_team'"
+              class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">새로
+              만들기</button>
+          </div>
+        </div>
+      </div>
 </body>
 
-    <script src="{{url_for('static', filename='index.js')}}"></script>
+<script src="{{url_for('static', filename='index.js')}}"></script>
 
-    <script>
-      $(document).ready(function () {
-                groupByWeek();
-            });
-      function groupByWeek() {
-        $('#group_by_week').empty()
+<script>
+  $(document).ready(function () {
 
-        $.ajax({
-          type:"GET",
-          url:"/api/getTeam",
-          data: {},
-          success: function (response) {
-            let teams = response['teams']
-            var team_number_arr = new Array();
-            before_week = teams[0]['week'];
-            for(let i=0; i<teams.length; i++) {
-              let team = teams[i]
-              let team_number = team['number']
-              console.log(team_number)
-              let start_date = team['start_date']
-              let end_date = team['end_date']
-              let week = team['week']
-              if(before_week != week){
-                initGroup(before_week);
-                initTeam(before_week, team_number_arr);
-                team_number_arr = new Array();
-              }
-              before_week = week;
-              team_number_arr.push(team_number);
+    let id = ''
+    let name = ''
+    //get token
+    let data = localStorage.getItem('token') || ''
+    if (data !== '') {
+      token_data = { 'token': data }
+      $.ajax({
+        url: '/validator',
+        type: "GET",
+        data: {},
+        headers: { "Authorization": 'Bearer ' + data },
+        error: function (request, status, error) {
+          console.log("code: " + request.status)
+          console.log("message: " + request.responseText)
+          console.log("error: " + error);
+        },
+        success: function (res) {
+          //토큰 유효성 검사
+          if (res['result'] == 'fail') {
+            //console.log(res)
+            window.location.href = '{{ url_for("pop") }}'
+          };
+          if (res['result'] == 'success') {
+            data = res['data']
+            //console.log(data)
 
-              if (i == teams.length - 1){
-                initGroup(before_week);
-                initTeam(before_week, team_number_arr);
-              }
-            }
+            groupByWeek(data);
           }
-        })
-      }
 
-      function initGroup(week){
-        let tempHtml = `<select id="week${week}_team" onchange="location.href='team_page'" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-6">
-                        <option selected>정글 3기 ${week}주차</option>`;
-        $('#group_by_week').append(tempHtml)
-      }
+        }
+      })
+    }
+    //if token doesn't exist
+    else if (data == '') {
+      window.location.href = '{{ url_for("pop") }}'
+    }
 
-      function initTeam(week, team_number_arr){
-        for(let i=0; i<team_number_arr.length; i++){
-          let tempHtml = `<option value="${team_number_arr[i]}">${team_number_arr[i]}</option>`
-          $(`#week${week}_team`).append(tempHtml)
+
+  });
+
+  function groupByWeek(user_data) {
+    $('#group_by_week').empty()
+
+    $.ajax({
+      type: "GET",
+      url: "/api/getTeam",
+      data: {},
+      success: function (response) {
+        let teams = response['teams']
+        var team_number_arr = new Array();
+        before_week = teams[0]['week'];
+        for (let i = 0; i < teams.length; i++) {
+          let team = teams[i]
+          let team_number = team['number']
+          console.log(team_number)
+          let start_date = team['start_date']
+          let end_date = team['end_date']
+          let week = team['week']
+          if (before_week != week) {
+            initGroup(before_week, user_data);
+            initTeam(before_week, team_number_arr);
+            team_number_arr = new Array();
+          }
+          before_week = week;
+          team_number_arr.push(team_number);
+
+          if (i == teams.length - 1) {
+            initGroup(before_week, user_data);
+            initTeam(before_week, team_number_arr);
+          }
         }
       }
-    </script>
+    })
+  }
+  //onchange="location.href='team_page'"
+  function initGroup(week, user_data) {
+    //console.log("user_data", typeof (user_data))
+    let id = user_data['id']
+    let name = user_data['name']
+    let tempHtml = `<select id="week${week}_team" onchange="postData('${id}', '${name}', '${week}')" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-green-700 dark:border-green-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-6">
+                        <option selected>정글 3기 ${week}주차</option>`;
+    $('#group_by_week').append(tempHtml)
+  }
+  function initTeam(week, team_number_arr) {
+    for (let i = 0; i < team_number_arr.length; i++) {
+      let tempHtml = `<option id='opt' value="${team_number_arr[i]}">${team_number_arr[i]}</option>`
+      $(`#week${week}_team`).append(tempHtml)
+    }
+  }
+
+
+  function postData(id, name, week) {
+    console.log("DDD", id, name)
+    //console.log("user_data", JSON.stringify(data))
+
+    var selectElement = document.getElementById(`week${week}_team`)
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+    var selectedValue = selectedOption.value;
+    var selectedText = selectedOption.text;
+    //console.log("D", selectedValue, selectedText)
+
+    user_data = {
+      'id': id,
+      'name': name,
+      'team': selectedValue,
+      'week': week,
+    }
+    $.ajax({
+      url: '/team_page',
+      data: user_data,
+      type: 'POST',
+      error: function (request, status, error) {
+        console.log("code: " + request.status)
+        console.log("message: " + request.responseText)
+        console.log("error: " + error);
+      },
+      success: function (res) {
+        console.log("post suceess", selectedValue)
+
+        localStorage.setItem("team_num", selectedValue)
+        localStorage.setItem("week", week)
+        console.log("ddd", localStorage.getItem("team_num"))
+        console.log("ddd", localStorage.getItem("week"))
+        window.location.href = "{{ url_for('teamPage') }}"
+      }
+    })
+  }
+
+</script>
 
 </html>
