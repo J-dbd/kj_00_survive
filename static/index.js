@@ -49,9 +49,10 @@ function getDate(){
             let received_target_team_data = response['target_team'];
             let start_date = received_target_team_data[0]['start_date'];
             let end_date = received_target_team_data[0]['end_date'];
+            let checkbox_status = received_target_team_data[0]['state']
             let team_goal = received_target_team_data[0]['text'];
             initProjectTerm(start_date, end_date);
-            initTeamGoal(team_goal);
+            initTeamGoal(team_goal, checkbox_status);
         }
     })
 }
@@ -110,16 +111,31 @@ function initDate(date){
     $('#calendar_date').append(temp_html);
 }
 
-function initTeamGoal(team_goal){
+function initTeamGoal(team_goal, checkbox_status){
     $(`#team_goal_board`).empty();
-    team_goal.forEach(function(goal){
-        let temp_html = `<div class="relative flex items-center mb-4 z-0">
+    for (let i=0; i<team_goal.length; i++){
+        let goal = team_goal[i];
+        let checked = checkbox_status[i]
+
+        if (checked == 0){
+            let temp_html = `<div class="relative flex items-center mb-4 z-0">
                                 <input type="text" id="disabled_standard" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " disabled />
                                 <label for="disabled_standard" class="absolute text-sm text-black dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">${goal}</label>
-                                <input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        </div>`;
-        $(`#team_goal_board`).append(temp_html);
-    })
+                                <input id="checkbox${i}" onclick="postCheckboxArray()" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            </div>`;
+                        $(`#team_goal_board`).append(temp_html);
+        }
+
+        else if (checked == 1){
+            let temp_html = `<div class="relative flex items-center mb-4 z-0">
+                                <input type="text" id="disabled_standard" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " disabled />
+                                <label for="disabled_standard" class="absolute text-sm text-black dark:text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">${goal}</label>
+                                <input id="checkbox${i}" onclick="postCheckboxArray()" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" checked>
+                            </div>`;
+                        $(`#team_goal_board`).append(temp_html);
+        }
+        
+    }
 }
 
 function initNewTeamGoal(new_team_goal){
