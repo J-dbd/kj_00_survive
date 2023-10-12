@@ -46,21 +46,27 @@
           data: {},
           success: function (response) {
             let teams = response['teams']
-            var team_name_arr = new Array();
-            before_week = 0;
+            var team_number_arr = new Array();
+            before_week = teams[0]['week'];
             for(let i=0; i<teams.length; i++) {
               let team = teams[i]
-              let team_name = team['name']
+              let team_number = team['number']
+              console.log(team_number)
               let start_date = team['start_date']
               let end_date = team['end_date']
               let week = team['week']
               if(before_week != week){
                 initGroup(before_week);
-                initTeam(before_week, team_name_arr);
-                team_name_arr = new Array();
+                initTeam(before_week, team_number_arr);
+                team_number_arr = new Array();
               }
               before_week = week;
-              team_name_arr.push(team_name)
+              team_number_arr.push(team_number);
+
+              if (i == teams.length - 1){
+                initGroup(before_week);
+                initTeam(before_week, team_number_arr);
+              }
             }
           }
         })
@@ -72,9 +78,9 @@
         $('#group_by_week').append(tempHtml)
       }
 
-      function initTeam(week, team_name_arr){
-        for(let i=0; i<team_name_arr.length; i++){
-          let tempHtml = `<option value="${team_name_arr[i]}">${team_name_arr[i]}</option>`
+      function initTeam(week, team_number_arr){
+        for(let i=0; i<team_number_arr.length; i++){
+          let tempHtml = `<option value="${team_number_arr[i]}">${team_number_arr[i]}</option>`
           $(`#week${week}_team`).append(tempHtml)
         }
       }

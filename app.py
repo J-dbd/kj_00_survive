@@ -2,11 +2,10 @@ from flask import Flask, render_template, url_for, request, session, redirect, f
 from pymongo import MongoClient, UpdateOne
 from bson.objectid import ObjectId
 import bcrypt, datetime
-from datetime import datetime, date
 
 app = Flask(__name__)
 
-client = MongoClient('mongodb://minkyu:jungle@43.200.163.82',27017)
+client = MongoClient('mongodb://minkyu:jungle@13.125.133.22',27017)
 db = client.jungle
 
 def get_week_number(date_str):
@@ -61,7 +60,8 @@ def getDate():
 @app.route('/api/getTeam', methods=['GET'])
 def getTeam():
     teams = list(db.team.find({}, {'_id': False}))
-    sorted_teams = sorted(teams, key=lambda x: (x['week'], x['name']))
+    print(list(db.team.find({}, {'_id': False})))
+    sorted_teams = sorted(teams, key=lambda x: (x['week'], x['number']))
     print(sorted_teams)
     return jsonify({'result': 'success', 'teams': sorted_teams})
 
@@ -73,7 +73,7 @@ def getTarget():
 
 @app.route('/api/postTeam', methods=['POST'])
 def postTeam():
-    received_name = request.form['name_give']
+    received_number = request.form['number_give']
     received_start_date = request.form['start_date_give']
     received_end_date = request.form['end_date_give']
 
@@ -91,7 +91,7 @@ def postTeam():
     week = present_week_number - start_week_number
 
     # week 계산 함수 작성 필요
-    insert_dict = {"name": int(received_name), "start_date": translated_start_data, "end_date": translated_end_data, "team_member": {}, "week": week}
+    insert_dict = {"number": int(received_number), "start_date": translated_start_data, "end_date": translated_end_data, "team_member": {}, "week": week}
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})
 

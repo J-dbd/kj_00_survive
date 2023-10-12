@@ -149,9 +149,9 @@ function initGroup(week) {
     $('#group_by_week').append(tempHtml)
 }
 
-function initTeam(week, team_name_arr) {
-    for (let i = 0; i < team_name_arr.length; i++) {
-        let tempHtml = `<option value="${team_name_arr[i]}">${team_name_arr[i]}</option>`
+function initTeam(week, team_number_arr) {
+    for (let i = 0; i < team_number_arr.length; i++) {
+        let tempHtml = `<option value="${team_number_arr[i]}">${team_number_arr[i]}</option>`
         $(`#week${week}_team`).append(tempHtml)
     }
 }
