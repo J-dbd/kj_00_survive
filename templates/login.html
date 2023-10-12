@@ -279,6 +279,44 @@
 
         })
     }
+
+    $(document).ready(function () {
+
+        let id = ''
+        let name = ''
+        //get token
+        let data = localStorage.getItem('token') || ''
+        if (data !== '') {
+            token_data = { 'token': data }
+            $.ajax({
+                url: '/validator',
+                type: "GET",
+                data: {},
+                headers: { "Authorization": 'Bearer ' + data },
+                error: function (request, status, error) {
+                    console.log("code: " + request.status)
+                    console.log("message: " + request.responseText)
+                    console.log("error: " + error);
+                },
+                success: function (res) {
+                    //토큰 유효성 검사
+                    if (res['result'] == 'success') {
+                        window.location.href = "{{ url_for('selectTeam') }}"
+                    }
+                }
+
+            })
+        }
+        //if token doesn't exist
+        else if (data == '') {
+            window.location.href = '{{ url_for("pop") }}'
+        }
+
+        setTimeout(() => {
+            $("#main").addClass("show")
+        }, 800)
+        //console.log('id/name', id, name)
+    })
 </script>
 
 </html>
