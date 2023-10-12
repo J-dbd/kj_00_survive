@@ -9,37 +9,21 @@ app = Flask(__name__)
 client = MongoClient('mongodb://minkyu:jungle@43.200.163.82',27017)
 db = client.jungle
 
-# @app.route('/')
-# def home():
-#    return render_template('target_list.html')
+@app.route('/')
+def login():
+   return render_template('login.html')
 #
 @app.route('/select_team')
 def selectTeam():
    return render_template('select_team.html')
-#
-# @app.route('/click_start_date.html')
-# def createTeam():
-#    return render_template('create_team.html')
-#
-#
-#
-# @app.route('/api/list', methods=['GET'])
-# def getGroup():
-#    groups = list(db.group.find({}, {'_id: False'}).sort('name', -1))
-#    return jsonify({'result': 'success', 'group': groups})
-#    return render_template('select_team.html')
-#
-# @app.route('/login')
-# def login():
-#     return render_template('login.html')
-#
-# @app.route('/forgot_pwd')
-# def forgot_pwd():
-#     return render_template('forgot_pwd.html')
-#
-# @app.route('/sign_in')
-# def sign_in():
-#    return render_template('sign_in.html')
+
+@app.route('/forgot_pwd')
+def forgot_pwd():
+    return render_template('forgot_pwd.html')
+
+@app.route('/sign_in')
+def sign_in():
+   return render_template('sign_in.html')
 
 
 @app.route('/target_list')
