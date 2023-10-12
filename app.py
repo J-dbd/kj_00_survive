@@ -184,7 +184,12 @@ def find_pwd():
 def select_team():
    return render_template('select_team.html')
 
-
+@app.route('/api/getTeamNum')
+def getTeamNum():
+   teams = list(db.team.find({}, {'team_member':True,'number':True,'_id': False}))
+   print(teams)
+   #db.team.insert_one({'end_date':'2023-11-11','number':11,'start_date':'2023-11-18','team_member':['ee1122','kyumin','ee112233'],'week':2})
+   return
 
 
 @app.route('/')
@@ -199,8 +204,13 @@ def selectTeam():
 def createTeam():
    return render_template('create_team.html')
 
-@app.route('/team_page')
+@app.route('/team_page',methods=['GET','POST'])
 def teamPage():
+   if request.method=="POST":
+      id=request.form['id']
+      name=request.form['name']
+      print("id/name",id,name)
+      return render_template('team_page.html',id=id,name=name)
    return render_template('team_page.html')
 
 @app.route('/api/getDate', methods=['GET'])

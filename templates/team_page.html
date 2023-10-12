@@ -31,7 +31,7 @@
         <header>
             <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl py-4">
                 <span class="self-center text-3xl font-semibold whitespace-nowrap text-black">
-                    <font class="text-green-700">크래프톤</font> 정글 3기
+                    <font class="text-green-700">크래프톤</font> 정글 3기 {{id}}
                 </span>
                 <div>
                     <div id="header_username">
@@ -143,6 +143,7 @@
 
 
     $(document).ready(function () {
+
         let id = ''
         let name = ''
         getDate();
@@ -185,13 +186,13 @@
 
         setTimeout(() => {
             $("#main").addClass("show")
-        }, 100)
+        }, 800)
         //console.log('id/name', id, name)
     })
     //header
     function logout() {
         localStorage.removeItem('token')
-        location.reload()
+        window.location.href = '{{ url_for("login") }}'
     }
 
 
