@@ -49,9 +49,10 @@ function getDate() {
       let received_target_team_data = response["target_team"];
       let start_date = received_target_team_data[0]["start_date"];
       let end_date = received_target_team_data[0]["end_date"];
+      let checkbox_status = received_target_team_data[0]["state"];
       let team_goal = received_target_team_data[0]["text"];
       initProjectTerm(start_date, end_date);
-      initTeamGoal(team_goal);
+      initTeamGoal(team_goal, checkbox_status);
     },
   });
 }
