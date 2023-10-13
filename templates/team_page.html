@@ -150,7 +150,6 @@
         let id = ''
         let name = ''
         getDate();
-
         //get token
         let data = localStorage.getItem('token') || ''
         if (data !== '') {
@@ -221,12 +220,10 @@
         localStorage.removeItem('team_num')
         localStorage.removeItem('week')
         localStorage.removeItem('token')
+        localStorage.removeItem('start_date')
+        localStorage.removeItem('end_date')
         window.location.href = '{{ url_for("login") }}'
     }
-
-    console.log("ddd", localStorage.getItem("team_num"))
-    console.log("ddd", localStorage.getItem("week"))
-
 
     function addTeamGoal() {
         var new_team_goal = document.getElementById('new_team_goal').value;

@@ -157,26 +157,24 @@
 
 
   function postData(id, name, week) {
-    console.log("DDD", id, name)
-    //console.log("user_data", JSON.stringify(data))
 
     var selectElement = document.getElementById(`week${week}_team`)
     var selectedOption = selectElement.options[selectElement.selectedIndex];
 
     var selectedValue = selectedOption.value;
     var selectedText = selectedOption.text;
-    //console.log("D", selectedValue, selectedText)
 
-    user_data = {
+    var user_data = {
       'id': id,
       'name': name,
       'team': selectedValue,
       'week': week,
-    }
+    };
     $.ajax({
-      url: '/team_page',
-      data: user_data,
+      url: '/api/postSelectTeam',
+      data: JSON.stringify(user_data),
       type: 'POST',
+      contentType: 'application/json',
       error: function (request, status, error) {
         console.log("code: " + request.status)
         console.log("message: " + request.responseText)
@@ -187,13 +185,25 @@
 
         localStorage.setItem("team_num", selectedValue)
         localStorage.setItem("week", week)
-        console.log("ddd", localStorage.getItem("team_num"))
-        console.log("ddd", localStorage.getItem("week"))
-        window.location.href = "{{ url_for('teamPage') }}"
+        // window.location.href = "{{ url_for('teamPage') }}"
+        fetch('/api/postSelectTeam', {
+            method: 'POST',
+            body: JSON.stringify(user_data),
+            headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          localStorage.setItem("start_date", data.start_date);
+          localStorage.setItem("end_date", data.end_date);
+        })
+        .catch(error => console.error(error));
       }
     })
   }
 
+  
 </script>
 
 </html>

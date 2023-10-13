@@ -35,8 +35,6 @@ def get_week_number(date_str):
     except ValueError:
         return "날짜 형식이 잘못되었습니다."
 
-
-
 #####################
 #회원가입과 환영페이지 #
 ######################      
@@ -188,7 +186,7 @@ def getTeamNum():
 
 @app.route('/')
 def home():
-   return render_template('team_page.html')
+   return render_template('login.html')
 
 @app.route('/select_team', methods=["POST"])
 def selectTeam():
@@ -198,15 +196,10 @@ def selectTeam():
 def createTeam():
    return render_template('create_team.html')
 
-@app.route('/team_page',methods=['GET','POST'])
+@app.route('/team_page')
 def teamPage():
-   if request.method=="POST":
-      id=request.form['id']
-      name=request.form['name']
-      team=request.form['team']
-      print("id/name/team",id,name,team)
-      return render_template('team_page.html',id=id,name=name,team=team)
    return render_template('team_page.html')
+
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
@@ -225,6 +218,38 @@ def getTarget():
     targets = list(db.target.find({}, {'_id': False}))
     sorted_targets = sorted(targets, key=lambda x: (x['target_date'], x['member_id']))
     return jsonify({'result': 'success', 'targets': sorted_targets})
+
+@app.route('/api/postSelectTeam', methods=['POST'])
+def postSelectTeam():
+
+   data = request.get_json()  # JSON 데이터를 파싱
+
+   id = data['id']
+   name = data['name']
+   team = data['team']
+   week = data['week']
+
+   print("id/name/team/week", id, name, team, week)
+
+   # week, number를 바탕으로 start_date, end_date, number를 HTML로 반환
+   query = {
+      'week': int(week),
+      'number': int(team)
+   }
+
+   processed_data = list(db.team.find(query))
+
+   print("processed_data: ", processed_data)
+
+   if len(processed_data) != 0:
+      start_date = processed_data[0]['start_date']
+      end_date = processed_data[0]['end_date']
+      number = team
+      print()
+   else:
+      return jsonify({'result': 'fail'})
+
+   return jsonify(start_date=start_date, end_date=end_date, number=name)
 
 @app.route('/api/postTeam', methods=['POST'])
 def postTeam():
