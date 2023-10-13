@@ -67,7 +67,7 @@ function getTarget(id) {
       let target_data = response["targets"];
       var member_id_set = new Set();
       var before_date = target_data[0]["target_date"];
-      const date_string_arr = Array.from({ length: 30 }, (_, index) =>
+      const date_string_arr = Array.from({ length: 31 }, (_, index) =>
         (index + 1).toString().padStart(2, "0")
       );
 
