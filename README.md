@@ -5,6 +5,9 @@
 * 팀 전체의 업무 진행 상황과 내 업무의 진행 상황을 함께 관리해주는 웹 사이트 제작
 * 5개월간의 업무를 하나의 웹사이트에서 확인 가능
 
+## Wireframe 
+[figma]([http://www.google.co.kr](https://www.figma.com/file/PN81WhfIARYKsArRyWvNYI/team4_project1?type=design&node-id=60%3A371&mode=design&t=7TfrQ7EF48WU8rlZ-1)).
+
 ## Pipe line
 ![Pipe_line](./README_resource/1.png)
 
