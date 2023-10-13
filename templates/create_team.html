@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>정글에서 살아남기</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js"></script>
+  <style>
+    .align1::-webkit-input-placeholder {
+      text-align: left
+    }
+
+    .align2::-webkit-input-placeholder {
+      text-align: center
+    }
+  </style>
+</head>
+
+<body>
+  <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-4 sm:py-12">
+    <div
+      class="relative bg-white px-6 pt-8 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10">
+      <div class="divide-y divide-gray-300/50">
+        <div class="space-y-6 py-8 text-base leading-7 text-gray-600">
+          <p class="flex justify-center text-[22px]">
+            새로운 팀 만들기
+          </p>
+        </div>
+
+        <form>
+          <div class="grid gap-6 mb-6">
+            <div>
+              <input type="text" id="team_number"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="부족 번호" required>
+            </div>
+        </form>
+
+        <div date-rangepicker class="flex items-center">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+              </svg>
+            </div>
+            <input name="start" type="text" id="start_date"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="시작일">
+          </div>
+          <span class="mx-4 text-gray-500">to</span>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+              </svg>
+            </div>
+            <input name="end" type="text" id="end_date"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="종료일">
+          </div>
+        </div>
+
+        <div class="pt-8 text-base font-semibold leading-7 flex justify-center">
+          <button type="button"
+            onclick="postTeam(document.getElementById('team_number').value, document.getElementById('start_date').value, document.getElementById('end_date').value); location.href='select_team';"
+            class="focus:outline-none text-white bg-green-700 hover-bg-green-800 focus-ring-4 focus-ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark-hover-bg-green-700 dark-focus-ring-green-800">확인</button>
+          <button type="button" onclick="location.href='select_team'"
+            class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-7 py-2.5 ml-8 mr-8 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">취소</button>
+        </div>
+      </div>
+    </div>
+</body>
+<script src="{{url_for('static', filename='index.js')}}"></script>
+<script>
+  function postTeam(number, start_date, end_date) {
+    $.ajax({
+      type: "POST",
+      url: "api/postTeam",
+      data: {
+        'number_give': number,
+        'start_date_give': start_date,
+        'end_date_give': end_date
+      },
+      success: function (response) {
+        if (response['result'] == 'success') {
+          alert('팀이 등록되었습니다!')
+        }
+      }
+    })
+
+    $(document).ready(function () {
+
+      let id = ''
+      let name = ''
+      //get token
+      let data = localStorage.getItem('token') || ''
+      if (data !== '') {
+        token_data = { 'token': data }
+        $.ajax({
+          url: '/validator',
+          type: "GET",
+          data: {},
+          headers: { "Authorization": 'Bearer ' + data },
+          error: function (request, status, error) {
+            console.log("code: " + request.status)
+            console.log("message: " + request.responseText)
+            console.log("error: " + error);
+          },
+          success: function (res) {
+            //토큰 유효성 검사
+            if (res['result'] == 'fail') {
+              //console.log(res)
+              window.location.href = '{{ url_for("pop") }}'
+            };
+            if (res['result'] == 'success') {
+              data = res['data']
+              //console.log(data)
+              id = data['id']
+              name = data['name']
+            }
+          }
+
+        })
+      }
+      //if token doesn't exist
+      else if (data == '') {
+        window.location.href = '{{ url_for("pop") }}'
+      }
+
+      setTimeout(() => {
+        $("#main").addClass("show")
+      }, 800)
+      //console.log('id/name', id, name)
+    })
+  }
+</script>
+
+</html>
