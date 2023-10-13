@@ -44,7 +44,6 @@ def get_week_number(date_str):
 @app.route('/sign_in', methods=['GET','POST'])
 def sign_in():
    if request.method=='POST':
-      #print("request.form",request.form.to_dict())
       id=request.form['id']
       pw=request.form['password']
       name=request.form['name']
@@ -82,7 +81,6 @@ def login():
          }
          expires_delta=timedelta(seconds=60*60*10)
          access_token = create_access_token(identity=id,additional_claims=additional_claims,expires_delta=expires_delta)
-         #print("access_token",access_token)
          return jsonify({'result':'success',
                         'access_token':access_token})
       else:
@@ -103,7 +101,6 @@ def protected():
    current_identity = get_jwt_identity()
    if current_identity:
       data=get_jwt()
-      #print(data)
       data={'id':data['sub'],'name':data['name']}
       return jsonify({'result':"success",'data':data})
    else:
@@ -182,13 +179,12 @@ def select_team():
 @app.route('/api/getTeamNum')
 def getTeamNum():
    teams = list(db.team.find({}, {'team_member':True,'number':True,'_id': False}))
-   print(teams)
    #db.team.insert_one({'end_date':'2023-11-11','number':11,'start_date':'2023-11-18','team_member':['ee1122','kyumin','ee112233'],'week':2})
    return
 
 @app.route('/')
 def home():
-   return render_template('team_page.html')
+   return render_template('login.html')
 
 @app.route('/select_team', methods=["POST"])
 def selectTeam():
@@ -204,13 +200,11 @@ def teamPage():
       id=request.form['id']
       name=request.form['name']
       team=request.form['team']
-      print("id/name/team",id,name,team)
       return render_template('team_page.html',id=id,name=name,team=team)
    return render_template('team_page.html')
 
 @app.route('/api/getDate', methods=['GET'])
 def getDate():
-    print("called")
     target_team = list(db.target_team.find({}, {'_id': False}))
     return jsonify({'result': 'success', 'target_team': target_team})
 
@@ -249,6 +243,35 @@ def postTeam():
     db.team.insert_one(insert_dict)
     return jsonify({'result': 'success'})
 
+@app.route('/api/postNewTeamGoal', methods=['POST'])
+def postNewTeamGoal():
+      received_start_to_end_date = request.form['start_to_end_date']
+      received_team_number = request.form['team_number']
+      received_new_team_goal = request.form['text']
+
+      date_list = received_start_to_end_date.split('~')
+      start_date = date_list[0].rstrip()
+      end_date = date_list[-1].lstrip()
+
+      query = {
+         'start_date': start_date,
+         'end_date': end_date,
+         'team_number': int(received_team_number)
+      }
+
+      result_list = list(db.target_team.find(query))
+
+      if (len(result_list) != 0):
+         result = result_list[0]['_id']
+      else:
+         return jsonify({'result': 'fail'})
+
+      db.target_team.update_one(
+         {"_id": ObjectId(result)}, 
+         {"$push": {"text": received_new_team_goal, "state": 0}}
+      )
+      return jsonify({'result': 'success'})
+
 @app.route('/target_list', methods=['GET'])
 def target_list():
     _id = request.args.get('_id')
@@ -276,8 +299,6 @@ def target_list():
         else:
             result[user_name].append(text_state)
 
-    print(result)
-
     if cnt == 0:
         percentage = 0
     else:
@@ -294,7 +315,6 @@ def target_list():
 def is_checked():
    obj_id = request.form['obj_id']
    state = request.form['state']
-   print(obj_id)
    # tgt = list(db.target.find({"_id": ObjectId(obj_id)}));
    if state == "checked":
        db.target.update_one({"_id": ObjectId(obj_id)}, {"$set": {"state": False}})
@@ -312,7 +332,6 @@ def create_new_target():
         'text': request.form['text'],
         'state': False
     }
-    print(_dict)
     db.target.insert_one(_dict)
 
     rtn_val = {'result': 'success'}
