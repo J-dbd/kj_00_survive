@@ -35,4 +35,3 @@ pip install -r requirements.txt
         target_team_list.html
         team_page.html
 ```
-        
